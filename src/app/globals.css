@@ -1,26 +1,1404 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  /* The site gutter. Every full-bleed section aligns its outermost content to
+     this, so the nav wordmark, the hero copy and the section headings all sit
+     on one vertical line at any viewport width. Set by the nav (Figma node
+     78:316, px 40). Change it here and the whole site follows. */
+  --site-gutter: 40px;
+
+  --background: #fefefd;
   --foreground: #171717;
+
+  /* Hero / header section tokens (Figma: node 14:322) */
+  --canvas: #fefefd;
+  --hero-subtext: #ececec;
+
+  /* Our capabilities section tokens (Figma: node 22:376) */
+  --capability-intro: #525252;
+  --capability-idle: #b3b3b3;
+  --capability-rule: #d7d7d7;
+
+  /* ─── Type scale ────────────────────────────────────────────────────────
+     Every size the design uses, and nothing else. Named for the job the type
+     is doing rather than its size, so a component asks for "body" and cannot
+     quietly invent a 72px or a 56px of its own — which is how the site came to
+     have both.
+
+     Display sizes scale with the viewport on the formula the featured-slide
+     titles already used (80px at the 1440 frame, easing to 40 on narrow
+     windows). Everything from the lead down stays at its drawn pixel size:
+     it is text being read, not a drawing being scaled. */
+
+  --type-caption: 12px; /* architect's base */
+  --type-caption-lh: 16px;
+  --type-meta: 16px; /* counters, location, contact lines */
+  --type-meta-lh: 19px;
+  --type-body: 16px; /* the workhorse: copy, labels, buttons */
+  --type-body-lh: 24px;
+  --type-subhead: 20px; /* hero strapline, section labels */
+  --type-subhead-lh: 32px;
+  --type-wordmark: 24px; /* "kairos studio" */
+  --type-wordmark-lh: 29px;
+  --type-lead: 24px; /* section headings and lead copy */
+  --type-lead-lh: 32px;
+  --type-menu: clamp(2rem, 3.3333vw, 3rem); /* 48px, nav overlay */
+  --type-menu-lh: 1.3333;
+  --type-display: clamp(
+    2.5rem,
+    5.5556vw,
+    5rem
+  ); /* 80px, page + section titles */
+  --type-display-lh: 1;
+  --type-display-loose: clamp(
+    2.5rem,
+    5.5556vw,
+    5rem
+  ); /* 80px, stacked labels */
+  --type-display-loose-lh: 1.2;
+  --type-script: clamp(3.75rem, 8.3333vw, 7.5rem); /* 120px, Pinyon accent */
+  --type-script-lh: 0.6667;
+
+  /* Project showcase tokens (Figma: node 139:865) */
+  --canvas-warm: #fff9f5;
+  --spec-label: #52525b;
+  --spec-rule: #d6d6d6;
+  --thumb-rule: #dfdfdf;
+
+  /* Footer tokens (Figma: node 179:1605) */
+  --footer-ink: #000000;
+  --footer-text: #e7e7e7;
+  --footer-rule: #707070;
+  --footer-muted: #848484;
+  --footer-wordmark: #2f2f2f;
+
+  /* About section tokens (Figma: node 152:1203) */
+  --about-ink: #362e2e;
+  --ps-closing-gap: 463px;
+
+  /* Design services section tokens (Figma: node 12:156) */
+  --heading-ink: #3b1b1b;
+  --script-gold: #c7984e;
+  --body-muted: #6a6a6a;
 }
 
 @theme inline {
+  /* Exposed on the spacing scale, so p-gutter / px-gutter resolve to it. */
+  --spacing-gutter: var(--site-gutter);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-canvas: var(--canvas);
+  --color-hero-subtext: var(--hero-subtext);
+
+  --color-capability-intro: var(--capability-intro);
+  --color-capability-idle: var(--capability-idle);
+  --color-capability-rule: var(--capability-rule);
+
+  /* Exposed as text-caption / text-body / text-display etc., each carrying
+     its own line height, so the pair can never be split up at a call site. */
+  --text-caption: var(--type-caption);
+  --text-caption--line-height: var(--type-caption-lh);
+  --text-meta: var(--type-meta);
+  --text-meta--line-height: var(--type-meta-lh);
+  --text-body: var(--type-body);
+  --text-body--line-height: var(--type-body-lh);
+  --text-subhead: var(--type-subhead);
+  --text-subhead--line-height: var(--type-subhead-lh);
+  --text-wordmark: var(--type-wordmark);
+  --text-wordmark--line-height: var(--type-wordmark-lh);
+  --text-lead: var(--type-lead);
+  --text-lead--line-height: var(--type-lead-lh);
+  --text-menu: var(--type-menu);
+  --text-menu--line-height: var(--type-menu-lh);
+  --text-display: var(--type-display);
+  --text-display--line-height: var(--type-display-lh);
+  --text-display-loose: var(--type-display-loose);
+  --text-display-loose--line-height: var(--type-display-loose-lh);
+  --text-script: var(--type-script);
+  --text-script--line-height: var(--type-script-lh);
+
+  --color-canvas-warm: var(--canvas-warm);
+  --color-spec-label: var(--spec-label);
+  --color-about-ink: var(--about-ink);
+
+  --color-heading-ink: var(--heading-ink);
+  --color-script-gold: var(--script-gold);
+  --color-body-muted: var(--body-muted);
+
+  /* ITC Avant Garde Gothic Pro carries the site; Pinyon Script is used only
+     for the script word in the design services heading. */
+  --font-sans: var(--font-avant-garde);
+  --font-script: var(--font-pinyon-script);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Both the loading screen and the project hero hold the page still by taking
+   overflow off this element, which on a desktop scrollbar would shift the
+   whole layout sideways and back again. Reserving the gutter means the page
+   does not move when the scrollbar does. */
+html {
+  scrollbar-gutter: stable;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* The veil is the full width of the thumbnail and slides in from the left, so
+   its right edge (the white playhead) tracks progress across the frame. */
+@keyframes hero-slide-progress {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* GSAP owns the scatter timeline (see scatter-reveal.tsx). This only stops the
+   section flashing its finished state before ScrollTrigger initialises; GSAP
+   then drives opacity and transform inline. */
+[data-scatter-item],
+[data-reveal-item] {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: -1ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Architect badge ────────────────────────────────────────────
+   Shared: the featured slides (node 94:561) and the project showcase hero
+   (node 154:1207) draw the same pill, to the pixel. Rendered by
+   ArchitectBadge — change the markup there, not in either caller. */
+.credit {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 8px 12px 8px 0;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* The wreath and avatar overlap by 12px on each seam. */
+.credit-marks {
+  display: flex;
+  align-items: center;
+}
+
+.credit-marks > * {
+  display: block;
+  width: 40px;
+  height: 40px;
+  flex: none;
+}
+
+.credit-marks > :not(:last-child) {
+  margin-right: -12px;
+}
+
+/* Figma exports the wreath once and mirrors the left copy at layer level
+   (scaleY(-1) then rotate(180deg), which nets to a horizontal flip), so one
+   asset serves both sides. */
+.credit-wreath-left {
+  transform: scaleX(-1);
+}
+
+.credit-avatar {
+  overflow: hidden;
+  border-radius: 99px;
+  /* Doubles as the placeholder the design draws before the portrait loads. */
+  background: #d9d9d9;
+}
+
+.credit-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  white-space: nowrap;
+}
+
+.credit-name {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 600;
+}
+
+/* The architect's own base, distinct from the project location bottom-left. */
+.credit-role {
+  font-size: var(--type-caption);
+  line-height: var(--type-caption-lh);
+  font-weight: 500;
+  color: #dfdfdf;
+}
+
+/* ─── 02 Featured projects ────────────────────────────────────────────────
+   Layout for the pinned, scroll-scrubbed project slides. The wipe itself is
+   written frame-by-frame by featured-projects-stage.tsx; everything here is
+   the resting geometry it animates away from. All proportions are
+   viewport-relative so the composition holds at any window size. */
+
+.fp-section {
+  position: relative;
+  /* One viewport of scroll per transition, plus one to hold the first slide.
+     Intentionally vh, not dvh: dvh changes as mobile browser chrome hides,
+     which would resize the pinned range mid-scrub. */
+  height: calc(var(--fp-slides, 3) * 100vh);
+  /* The section that follows paints above this one, so it can slide over the
+     stage at 1x while the stage climbs away at 0.5x. */
+  z-index: 0;
+  background: #000;
+}
+
+.fp-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  /* Keeps the slides compositing among themselves and not against the page. */
+  isolation: isolate;
+  background: #000;
+}
+
+/* Every slide is clipped by the one shared wipe line. The default below is the
+   pre-hydration state: slide one at rest, the rest fully clipped away. */
+.fp-slide {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(100% 0px 0px 0px);
+  will-change: clip-path;
+}
+
+.fp-slide:first-of-type {
+  clip-path: inset(0px 0px 0px 0px);
+}
+
+/* The only layer inside a slide that translates. The 4vh bleed is pure
+   insurance against sub-pixel seams — the parallax maths already keeps the
+   image inside its clip window at every point of the wipe. */
+.fp-bg {
+  position: absolute;
+  left: 0;
+  top: -4vh;
+  width: 100%;
+  height: 108vh;
+  will-change: transform;
+}
+
+/* Scrim, per node 88:463. Static like the rest of the foreground: it belongs
+   to the type it protects, not to the render parallaxing underneath it. */
+.fp-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+}
+
+/* Foreground — no transform of any kind, at rest or in motion. The block is
+   centred by flex so a two-line title simply pushes the credit upward.
+   Its left edge is the shared site gutter, which is where the design's
+   left:calc(50% - 393.5px) with a -50% shift resolves to on the 1440 frame. */
+.fp-copy {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--site-gutter);
+  width: 573px;
+  max-width: calc(100% - var(--site-gutter) * 2);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 40px;
+  color: #fff;
+}
+
+/* 80px on the 1440 frame, easing down on narrow viewports rather than
+   overflowing. line-height 1 keeps the design's 80/80 ratio at every size. */
+.fp-title {
+  font-size: var(--type-display);
+  line-height: var(--type-display-lh);
+  font-weight: 500;
+  text-align: left;
+}
+
+.fp-button {
+  display: inline-flex;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-inline: 16px;
+  border-radius: 6px;
+  background: #fff;
+  color: #000;
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow:
+    0 1px 2px 0 rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+  transition:
+    background-color 200ms ease-out,
+    transform 140ms ease-out;
+}
+
+.fp-button:hover {
+  background: #f2f2f2;
+}
+
+/* Gives under the press, matching the pill buttons elsewhere on the site. */
+.fp-button:active {
+  transform: scale(0.97);
+}
+
+/* Location and counter both sit 32px off the bottom, on the site gutter. */
+.fp-meta {
+  position: absolute;
+  bottom: 32px;
+  font-size: var(--type-meta);
+  line-height: var(--type-meta-lh);
+  font-weight: 500;
+  color: var(--hero-subtext);
+}
+
+.fp-location {
+  left: var(--site-gutter);
+}
+
+.fp-counter {
+  right: var(--site-gutter);
+  display: flex;
+  gap: 8px;
+}
+
+/* Custom cursor. Position is written by the stage's rAF loop, which lerps it
+   toward the pointer so it trails on fast moves. */
+.fp-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9;
+  width: 46px;
+  height: 46px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+  will-change: transform;
+}
+
+/* The disc is a separate element from the one the rAF loop drives: that outer
+   transform is rewritten every frame, so a CSS transition on it would be
+   trampled before it could run. Scale lives here instead, free to ease. */
+.fp-cursor-dot {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Swells over anything actionable and gives under a press, so the pointer
+   answers back instead of just tracking. */
+.fp-cursor[data-hot="true"] .fp-cursor-dot {
+  transform: scale(1.28);
+}
+
+.fp-cursor[data-pressed="true"] .fp-cursor-dot {
+  transform: scale(0.86);
+}
+
+.fp-cursor[data-hot="true"][data-pressed="true"] .fp-cursor-dot {
+  transform: scale(1.08);
+}
+
+.fp-cursor[data-visible="true"] {
+  opacity: 1;
+}
+
+.fp-cursor-glyph {
+  width: 16px;
+  height: 16px;
+  stroke: #171717;
+  stroke-width: 1;
+  stroke-linecap: butt;
+  fill: none;
+}
+
+/* Only swap the native cursor out where there is one to swap. */
+@media (pointer: fine) {
+  .fp-section,
+  .fp-section * {
+    cursor: none;
+  }
+}
+
+/* Touch and coarse pointers keep the system cursor and lose the follower. */
+@media (pointer: coarse) {
+  .fp-cursor {
+    display: none;
+  }
+}
+
+/* ─── Site menu reveal (Figma node 79:355) ────────────────────────────────
+   The panel is uncovered by a hard edge travelling from the top of the
+   viewport to the bottom, and retracts the same way on close. This is the
+   wipe language the featured projects section already uses: the edge moves,
+   the content behind it does not — no fade, no translation, no scale.
+
+   The 700ms below is mirrored by MENU_REVEAL_MS in site-nav.tsx, which keeps
+   the panel mounted for exactly as long as the retract takes. Change both. */
+.menu-panel {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 700ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.menu-panel[data-revealed="true"] {
+  clip-path: inset(0 0 0 0);
+}
+
+/* The reveal is decorative: with reduced motion the panel simply appears.
+   The global prefers-reduced-motion block above already collapses the
+   duration, so this only stops the panel starting from a clipped state. */
+@media (prefers-reduced-motion: reduce) {
+  .menu-panel {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ─── Project showcase ────────────────────────────────────────────────────
+   Figma: "PROJECT PAGE", node 139:865
+   https://www.figma.com/design/IgGKIxIUSVPAgpdPb8wGk1/Untitled?node-id=139-865
+
+   The design is drawn on a 1440 frame: a 40px gutter each side leaves a
+   1360px content column, and every horizontal dimension below is that
+   column's own percentage of it. So the layout is exact at 1440 and scales
+   whole at every other width, instead of snapping between breakpoints.
+   Each percentage is written with the pixel value it came from, so a number
+   here can still be checked against the node it was measured from.
+
+   Vertical rhythm stays in pixels. It is spacing between blocks of type and
+   image, not a proportion of the viewport, and the design's own 40/160/200
+   steps read the same at any width. */
+
+.ps-page {
+  background: var(--canvas-warm);
+}
+
+/* Hero (node 154:1204). Drawn 1440x900, and taken as one screenful rather
+   than as 900 literal pixels — see the height below. */
+.ps-hero {
+  position: relative;
+  /* Drawn 900 tall on the 1440x900 frame — which is to say, the screen. So it
+     is written as the screen rather than as the number: the hero is the whole
+     of what you land on, at any size. svh, not vh or dvh: the small viewport
+     height is the one that does not change as mobile browser chrome comes and
+     goes, so the hero cannot resize itself out from under the copy mid-scroll. */
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  /* Keeps the scrim compositing against the render, not the page. */
+  isolation: isolate;
+  background: #000;
+}
+
+.ps-hero-bg {
+  position: absolute;
+  inset: 0;
+}
+
+/* Node 154:1205's second fill: black at 40% opacity, fading out to the right
+   across the full frame. The same scrim the featured slides use. */
+.ps-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
+}
+
+/* The nav sits over the render (node 154:1232) rather than above it, so the
+   hero reads full-bleed from the first pixel. */
+.ps-hero-nav {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 2;
+}
+
+/* Title block (node 154:1206): 573px wide on the gutter, and centred in the
+   900px frame — its drawn 282/618 bounds are symmetrical about the middle,
+   so flex centring holds it there however many lines the title runs to. */
+.ps-hero-copy {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--site-gutter);
+  z-index: 1;
+  display: flex;
+  width: 573px;
+  max-width: calc(100% - var(--site-gutter) * 2);
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 24px;
+  color: #fff;
+}
+
+/* 80px on the 1440 frame, easing down on narrow viewports rather than
+   overflowing. line-height 1 keeps the design's 80/80 ratio at every size. */
+/* TextReveal wraps the title and summary in one block, so the 24px the hero
+   column used to put between them now lives here. The wrapper itself sits in
+   that same 24px rhythm, which is why nothing above or below it moves. */
+.ps-hero-type {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.ps-title {
+  font-size: var(--type-display);
+  line-height: var(--type-display-lh);
+  font-weight: 500;
+}
+
+.ps-summary {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 500;
+}
+
+/* Where the design crops an image by hand instead of centring it, the record
+   carries an object-position and the wrapper passes it down as --ps-pos. Next's
+   fill mode writes its own inline style over the element, so this has to reach
+   the image through the wrapper rather than as a style prop. */
+.ps-hero-bg > img,
+.ps-hero-bg > video,
+.ps-plan-cell > img,
+.ps-feature > img,
+.ps-collage-item > img {
+  object-position: var(--ps-pos, 50% 50%);
+}
+
+/* Everything below the hero shares the gutter and the content column. */
+.ps-body {
+  padding-inline: var(--site-gutter);
+  /* The drawn distance from the last paragraph (7720) to the footer (7939). */
+  padding-bottom: var(--ps-closing-gap);
+}
+
+.ps-overview {
+  display: flex;
+  justify-content: space-between;
+  /* Hero bottom 900 -> overview top 940. */
+  margin-top: 40px;
+}
+
+/* Fact table, node 156:1384. 400 of 1360. */
+.ps-specs {
+  display: flex;
+  width: 29.4118%;
+  flex-direction: column;
+  /* Figma stacks row, rule, row on an 8px gap, and its rules are zero-height
+     lines — so consecutive rows sit 16px apart with the rule halfway. The
+     rule is drawn as a pseudo-element below, which keeps the table's 224px
+     height off the DOM and the <dl> markup valid. */
+  gap: 16px;
+}
+
+/* One row, node 156:1376. 32px tall including its 4px padding, which is what
+   leaves the 24px line box the label and value are set on. */
+.ps-spec-row {
+  position: relative;
+  display: flex;
+  height: 32px;
+  align-items: center;
+  gap: 12px;
+  padding: 4px;
+}
+
+/* The separator, centred in the 16px between two rows. Absolutely positioned,
+   so it divides the rows without adding to the table's height — which is how
+   the design's five 32px rows and eight 8px gaps come to exactly 224. */
+.ps-spec-row:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  height: 0;
+  border-top: 1px solid var(--spec-rule);
+}
+
+/* 200 of the row's 392px content box. */
+.ps-spec-label {
+  display: flex;
+  flex: 0 0 51.0204%;
+  align-items: center;
+  gap: 9px;
+  color: var(--spec-label);
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 500;
+}
+
+.ps-spec-label svg {
+  flex: none;
+}
+
+.ps-spec-value {
+  min-width: 0;
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 500;
+  color: #000;
+}
+
+/* Overview copy, node 162:1484. 660 of 1360. */
+.ps-overview-copy {
+  display: flex;
+  width: 48.5294%;
+  flex-direction: column;
+  /* Tighter than the 16 it used when the heading was 32px (node 162:1484). */
+  gap: 8px;
+}
+
+.ps-overview-heading {
+  font-size: var(--type-lead);
+  line-height: var(--type-lead-lh);
+  font-weight: 600;
+  color: #000;
+}
+
+.ps-overview-body {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 500;
+  color: #000;
+}
+
+/* Drawings (nodes 156:1266 and 191:1697). One stage, every drawing
+   absolutely placed on it, so choosing one is a change of slot rather than a
+   change of markup — which is what lets ProjectPlans animate the swap. Slots
+   arrive as custom properties, not inline geometry, so the stacked rules at
+   the bottom of this file can still override them. */
+.ps-plans {
+  /* Overview bottom 1164 -> drawings top 1324. */
+  margin-top: 160px;
+}
+
+.ps-plan-stage {
+  position: relative;
+  aspect-ratio: 1360 / 636;
+}
+
+/* The main frame and the rail's thumbnails are the same element in two sizes:
+   both carry the 1px INSIDE stroke Figma gives them, and border-box keeps the
+   drawing inside it either way. */
+.ps-plan-cell {
+  position: absolute;
+  left: var(--slot-x);
+  top: var(--slot-y);
+  width: var(--slot-w);
+  height: var(--slot-h);
+  overflow: hidden;
+  border: 1px solid var(--thumb-rule);
+  background: #fff;
+  /* FLIP inverts from the top-left corner, so the maths must too. */
+  transform-origin: 0 0;
+  cursor: pointer;
+}
+
+.ps-plan-cell[aria-current="true"] {
+  cursor: default;
+}
+
+.ps-plan-cell:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* Only the thumbnails answer the pointer; the drawing on show is already
+   where it belongs. */
+.ps-plan-cell:not([aria-current="true"]):hover {
+  border-color: var(--capability-idle);
+}
+
+/* Borders are scaled by the swap transform along with everything else, which
+   on the shrinking drawing would open as a 5px slab. Hidden for the flight. */
+.ps-plan-stage[data-swapping="true"] .ps-plan-cell {
+  border-color: transparent;
+}
+
+/* Previous / Next, node 191:1700. Height is left to the type so the row still
+   fits when the stage is scaled down. */
+.ps-plan-nav {
+  position: absolute;
+  left: var(--slot-x);
+  top: var(--slot-y);
+  display: flex;
+  width: var(--slot-w);
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ps-plan-nav button {
+  color: #000;
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 200ms ease-out;
+}
+
+.ps-plan-nav button:hover {
+  opacity: 0.6;
+}
+
+.ps-plan-nav button:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+.ps-feature {
+  position: relative;
+  /* Plans bottom 1960 -> first plate 2160; collage bottom 5958 -> second 6158. */
+  margin-top: 200px;
+}
+
+.ps-feature-first {
+  aspect-ratio: 1360 / 944;
+}
+
+.ps-feature-second {
+  aspect-ratio: 1360 / 850;
+}
+
+/* Scattered gallery, nodes 171:1552–171:1560. The six frames are placed by
+   hand, not on a grid, so each is positioned as a percentage of this box and
+   the whole arrangement scales as one drawing. */
+.ps-collage {
+  position: relative;
+  aspect-ratio: 1360 / 2694;
+  /* First plate bottom 3104 -> collage top 3264. */
+  margin-top: 160px;
+}
+
+/* Geometry arrives as custom properties rather than inline left/top/width/
+   height, so the stacked rules below can still override it — an inline style
+   would outrank them. */
+.ps-collage-item {
+  position: absolute;
+  left: var(--ps-x);
+  top: var(--ps-y);
+  width: var(--ps-w);
+  height: var(--ps-h);
+  overflow: hidden;
+}
+
+/* Closing paragraphs, node 171:1547. 672 of 1360, set against the right
+   gutter rather than aligned to the overview column above it. */
+.ps-closing {
+  display: flex;
+  width: 49.4118%;
+  flex-direction: column;
+  gap: 40px;
+  margin-top: 160px;
+  margin-left: auto;
+}
+
+.ps-closing p {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 500;
+  color: #000;
+}
+
+/* Below the frame the design stops at. The two columns stack, the plan rail
+   turns on its side under the drawing, and the collage gives up its placed
+   composition for a single column — each image keeping the aspect ratio it
+   was drawn at, which is passed down as --ps-ratio. */
+@media (max-width: 900px) {
+  .ps-hero {
+    height: 640px;
+  }
+
+  .ps-hero-copy {
+    width: auto;
+    right: var(--site-gutter);
+  }
+
+  .ps-overview {
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .ps-specs,
+  .ps-overview-copy,
+  .ps-closing {
+    width: 100%;
+  }
+
+  /* The stage gives up its fixed drawing: the chosen drawing goes full
+     width and the rail becomes a row of thumbnails beneath it. */
+  .ps-plan-stage {
+    display: flex;
+    aspect-ratio: auto;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ps-plan-cell {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    height: auto;
+    flex: 1 1 120px;
+    aspect-ratio: 204 / 120;
+  }
+
+  .ps-plan-cell[aria-current="true"] {
+    width: 100%;
+    flex-basis: 100%;
+    order: -1;
+    aspect-ratio: 1131 / 636;
+  }
+
+  .ps-plan-nav {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    order: 1;
+    margin-top: 8px;
+  }
+
+  .ps-collage {
+    display: flex;
+    aspect-ratio: auto;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ps-collage-item {
+    position: static;
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--ps-ratio);
+  }
+
+  .ps-plans,
+  .ps-collage,
+  .ps-closing {
+    margin-top: 96px;
+  }
+
+  .ps-feature {
+    margin-top: 96px;
+  }
+
+  .ps-body {
+    padding-bottom: 96px;
+  }
+
+  .ps-page {
+    --ps-closing-gap: 96px;
+  }
+}
+
+/* ─── Site footer ─────────────────────────────────────────────────────────
+   Figma: "FOOTER" component, node 219:2019
+
+   552px tall and clipping its own wordmark: 400 + 164 comes to 564, so the
+   last 12px of the type is cut by the footer's bottom edge. That overhang is
+   the design, not an overflow — hence the fixed height and the clip, rather
+   than padding that would let the wordmark finish.
+
+   Everything is measured from the footer's own top edge on the 1440 frame:
+   blurb and columns at 120, marks at 224, the meta line at 328, the rule at
+   368, the wordmark at 400. */
+
+.site-footer {
+  position: relative;
+  height: 552px;
+  overflow: hidden;
+  padding-inline: var(--site-gutter);
+  /* The drawn distance from the footer's top edge to the first line. */
+  padding-top: 120px;
+  background: var(--footer-ink);
+  color: var(--footer-text);
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 500;
+}
+
+/* What the studio is, on the left; where to go next, on the right. */
+.site-footer-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+/* Node 219:1985, left-aligned at 553 of the 1360 column. */
+.site-footer-blurb {
+  width: 553px;
+  max-width: 100%;
+  color: #fff;
+}
+
+/* Node 219:1998: five 40px marks, 16 apart. Blurb bottom 192 -> marks 224. */
+.site-footer-social {
+  display: flex;
+  width: fit-content;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.site-footer-social a {
+  display: block;
+  transition: opacity 200ms ease-out;
+}
+
+.site-footer-social a:hover {
+  opacity: 0.7;
+}
+
+.site-footer-social img {
+  display: block;
+  width: 40px;
+  height: 40px;
+}
+
+/* Nodes 219:1989 and 219:1994. The 80 between them is the gap the design
+   leaves at 1036 and 1192; space-between carries the pair to the gutter.
+
+   The drawing stops this group 2px short of the gutter (its contact column
+   ends at 1398) while the legal links directly below it end at 1400. Squared
+   off to the gutter here, on the grounds that a 2px difference between two
+   right-aligned things on the same edge is a slip rather than an intention. */
+.site-footer-columns {
+  display: flex;
+  gap: 80px;
+}
+
+.site-footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-style: normal;
+}
+
+.site-footer-column a {
+  width: fit-content;
+  transition: color 200ms ease-out;
+}
+
+.site-footer-column a:hover {
+  color: #fff;
+}
+
+/* The address column is set to the width the design wraps it at. */
+.site-footer-contact {
+  width: 206px;
+}
+
+/* Node 219:1984 and 219:1986, on one line. Quieter than the columns above, so
+   the eye takes them last. Top block bottom 272 -> meta 328. */
+.site-footer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 56px;
+  color: var(--footer-muted);
+}
+
+.site-footer-legal {
+  display: flex;
+  gap: 16px;
+}
+
+.site-footer-legal a {
+  transition: color 200ms ease-out;
+}
+
+.site-footer-legal a:hover {
+  color: #fff;
+}
+
+.site-footer-rule {
+  height: 0;
+  /* Meta bottom 352 -> rule 368. The negative bottom margin gives back what
+     the border adds, so the rule costs the layout nothing and the wordmark
+     lands on its drawn 400 rather than a pixel below it. */
+  margin-top: 16px;
+  margin-bottom: -1px;
+  border-top: 1px solid var(--footer-rule);
+}
+
+/* Node 256:52. Live type, set to fill the content column: 222px on the 1440
+   frame, which is 0.16324 of that column's 1360 — so the size is written as a
+   share of the column and the line goes on filling it at any width.
+
+   The design justifies the single line across the column. For two words that
+   is exactly space-between, which says it directly and, unlike
+   text-align-last, survives each word being wrapped in a mask. */
+.site-footer-wordmark {
+  display: flex;
+  justify-content: space-between;
+  /* Measured, not derived: with the leading left on, the line box sits lower
+     than Figma's cap-height-trimmed one, so this is the offset that puts the
+     glyphs where the drawing puts them — ink from 402 down to the footer's
+     bottom edge, which is where the design cuts it. */
+  margin-top: 16px;
+  color: var(--footer-wordmark);
+  font-size: calc((100vw - var(--site-gutter) * 2) * 0.16324);
+  /* The type's own line box (Figma reports lineHeightPercent 100, i.e. 1.2em).
+     Trimming it to the cap height the way Figma's leadingTrim does would put
+     the mask's edge through the ascenders and shave the tops off K, S, d and
+     t — the mask is here to hide the word below the line, not to crop it. The
+     block is pulled back up to sit where the drawing puts it instead. */
+  line-height: 1.2;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Each word keeps its own box, so the space the justification stretches stays
+   between the two words and never opens up between letters. */
+.site-footer-wordmark-word {
+  display: flex;
+}
+
+/* The clipping box each letter rises out of. Sized by the line, and
+   overflowing it downward is what the mask hides. */
+.site-footer-wordmark-mask {
+  display: block;
+  overflow: hidden;
+}
+
+.site-footer-wordmark-mask > span {
+  display: block;
+  will-change: transform;
+}
+
+@media (max-width: 900px) {
+  /* The drawn height is mostly the space above the wordmark, which only reads
+     at the width it was drawn for. Below that the footer sizes to its content,
+     the two halves stack, and the wordmark stops being clipped. */
+  .site-footer {
+    height: auto;
+    padding-top: 72px;
+    padding-bottom: 40px;
+  }
+
+  .site-footer-top {
+    flex-direction: column;
+    gap: 48px;
+  }
+
+  .site-footer-columns {
+    gap: 40px;
+  }
+
+  .site-footer-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 48px;
+  }
+}
+
+/* Visually hidden, but still announced. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── First-load screen ───────────────────────────────────────────────────
+   Figma: "LOADING SCREEN-1" 197:1705, "-2" 199:1747, "-3" 199:1758.
+
+   Measured on the 1440x900 boards and written as fractions of the viewport,
+   so the composition holds at any window size. The type keeps its drawn
+   pixel sizes — it is type, not a drawing. */
+
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  /* The boards are pure white, a shade off the page ground behind them. */
+  background: #fff;
+  color: var(--heading-ink);
+}
+
+/* Full-bleed from the start; the component scales it down to the drawn
+   650x400 and opens it again at 100%. Sizing it this way means the plate and
+   the hero it turns into are the same box. */
+.loader-plate {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  /* The reel's frames wait outside the plate and leave through the bottom of
+     it, so the plate is the window they are seen through. */
+  overflow: hidden;
+}
+
+/* One still in the shuffle. Parked above the plate in CSS rather than by the
+   timeline, so a frame cannot be caught on screen between the first paint and
+   the first tick. Nothing behind it is hidden: an image that has not arrived
+   yet draws nothing and the hero underneath simply stays put for that beat. */
+.loader-frame {
+  position: absolute;
+  inset: 0;
+  transform: translateY(-100%);
+  will-change: transform;
+}
+
+.loader-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Both halves of the wordmark on one line, centred, 12px apart as drawn
+   (node 197:1724 ends at 720, 197:1726 starts at 732). Sits at y 422 of 900. */
+.loader-wordmark {
+  position: absolute;
+  /* The boards set these two in caps (textCase UPPER on nodes 197:1724 and
+     197:1726), which is why "KAI.ROS" measures 91px there and not the 75px
+     the mixed-case string would. The nav wordmark below is not in caps, so
+     this is the screen's own treatment rather than the brand's. */
+  text-transform: uppercase;
+  top: 46.8889%;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  font-size: var(--type-lead);
+  line-height: var(--type-lead-lh);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.loader-wordmark span {
+  display: block;
+  will-change: transform;
+}
+
+/* Node 197:1737: 48/56, centred, its baseline 40px off the bottom. */
+.loader-count {
+  position: absolute;
+  text-transform: uppercase;
+  right: 0;
+  bottom: 40px;
+  left: 0;
+  text-align: center;
+  /* The one size on the site not on the scale: the boards draw the count at
+     48/56, tighter than the 48/64 the nav menu uses, because it is a numeral
+     in a fixed composition rather than type in a column. */
+  font-size: 48px;
+  line-height: 56px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Node 197:1739. Drawn as a rule along the very bottom of the frame that
+   fills as the count climbs; scaled rather than resized so it composites. */
+.loader-bar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 8px;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: currentColor;
+  will-change: transform;
+}
+
+@media (max-width: 900px) {
+  .loader-count {
+    font-size: 32px;
+    line-height: 40px;
+  }
+}
+
+/* ─── About ───────────────────────────────────────────────────────────────
+   Figma: "ABOUT SECTION", node 152:1203
+
+   Picture and copy side by side, centred against each other. 787 and 443 of
+   the 1360 column with 130 between: written as shares of that column, so the
+   pair keeps its proportions at any width. The 120 top and bottom is the
+   design's padding, and with the picture 550 tall it is what makes the drawn
+   790. */
+
+.about-section {
+  position: relative;
+  /* This is what slides over the pinned featured stage now, so it has to be
+     opaque and paint above it. The design leaves the frame unfilled and takes
+     the page's ground; that ground is painted on here for the same reason. */
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 120px var(--site-gutter);
+  background: var(--canvas);
+  color: var(--about-ink);
+}
+
+/* 787 of 1360. The ratio is the drawn 787x550, which gives the section its
+   height rather than the height being set. */
+.about-figure {
+  position: relative;
+  width: 57.8676%;
+  aspect-ratio: 787 / 550;
+  overflow: hidden;
+}
+
+/* 443 of 1360. The 9.56% left between the two is the design's 130. */
+.about-copy {
+  display: flex;
+  width: 32.5735%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+/* Node 199:1858. The mark and the word sit on one line, 8 apart. */
+.about-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--type-subhead);
+  line-height: var(--type-subhead-lh);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* The mark is set lighter than the word it introduces, as drawn. */
+.about-label span {
+  font-weight: 500;
+}
+
+.about-body {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 500;
+}
+
+/* Node 217:1946. The same white pill the featured slides use, at the 8px
+   radius this one is drawn with. */
+.about-button {
+  display: inline-flex;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 16px;
+  border-radius: 8px;
+  background: #fff;
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow:
+    0 1px 2px 0 rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+  transition:
+    background-color 200ms ease-out,
+    transform 140ms ease-out;
+}
+
+.about-button:hover {
+  background: #f2f2f2;
+}
+
+/* Gives under the press, matching the pill buttons elsewhere on the site. */
+.about-button:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 900px) {
+  /* Below the width it was drawn for, the picture goes over the copy rather
+     than beside it. */
+  .about-section {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 48px;
+    padding-block: 72px;
+  }
+
+  .about-figure,
+  .about-copy {
+    width: 100%;
+  }
+}
+
+/* ─── Arrow CTA sizing ────────────────────────────────────────────────────
+   ArrowFillButton sizes itself in vw, which made it 60px tall with a 16.6px
+   label that grew and shrank with the window — half again the height the
+   design draws a button at, and the one piece of type on the site that was
+   not on the scale.
+
+   Sized here rather than in the component so the vendored file stays as it
+   shipped. These win on the cascade without !important: Tailwind's utilities
+   are generated into layers, and unlayered rules beat layered ones whatever
+   the specificity.
+
+   The circle and its inset are read from the two custom properties the
+   component already exposes, so the fill, the clip-path and the circle all
+   follow from the same numbers. */
+
+.cta {
+  --icon-circle: 36px;
+  --icon-right: 6px;
+  height: 48px;
+  /* Label padding left; on the right it has to clear the circle as well. */
+  padding-left: 24px;
+  padding-right: calc(var(--icon-circle) + var(--icon-right) + 16px);
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+}
+
+/* The fill layer carries a second copy of the label and has to sit exactly
+   under the first, so it takes the same padding.
+   
+   :not(:empty) matters. The component has two sibling divs: this one, which
+   holds the label, and an empty one that paints the circle and grows into the
+   fill. Padding both pushes the empty one out to the width of its own padding
+   — it is inset-sized at 36px, and 24 + 58 of padding forces it to 82 — which
+   reads as the circle having gone square at the top and bottom. */
+.cta > div:not(:empty) {
+  padding-left: 24px;
+  padding-right: calc(var(--icon-circle) + var(--icon-right) + 16px);
+}
+
+.cta svg {
+  width: 18px;
+  height: 18px;
 }
