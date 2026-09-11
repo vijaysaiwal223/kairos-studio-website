@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { startSmoothScroll, stopSmoothScroll } from "@/lib/smooth-scroll";
+
 /**
  * Site navigation and its full-screen menu.
  * Figma: "Nav Container" node 78:316 (closed) and "Nav" node 79:355 (open).
@@ -25,10 +27,10 @@ const MENU_REVEAL_MS = 700;
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "Projects", href: "#projects" },
-  { label: "Architects", href: "#architects" },
-  { label: "About us", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Architects", href: "/#architects" },
+  { label: "About us", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 /** Hamburger glyph, exported from Figma node 78:347. Path data is verbatim. */
@@ -69,18 +71,44 @@ function CloseIcon() {
   );
 }
 
+/**
+ * Which ground the closed bar is sitting on.
+ *
+ * "media" is the original and the default: white type and a white disc, set
+ * over a photograph. "ground" is the home page (Figma node 357:283), where the
+ * bar sits on the page's own white above the hero plate rather than over it,
+ * and the whole thing reverses. The open overlay is unaffected — it paints its
+ * own ground, so it is white-on-dark either way.
+ */
+export type SiteNavTone = "media" | "ground";
+
+const TONES = {
+  media: {
+    ink: "text-white",
+    outline: "focus-visible:outline-white",
+    disc: "bg-white text-black group-hover:bg-white/90",
+  },
+  ground: {
+    ink: "text-black",
+    outline: "focus-visible:outline-black",
+    disc: "bg-black text-white group-hover:bg-black/90",
+  },
+} as const;
+
 const WORDMARK =
-  "text-wordmark font-semibold whitespace-nowrap text-white transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white";
+  "text-wordmark font-semibold whitespace-nowrap transition focus-visible:outline-2 focus-visible:outline-offset-4";
 
 const MENU_BUTTON =
-  "group flex cursor-pointer items-center gap-3 rounded-full transition focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white";
+  "group flex cursor-pointer items-center gap-3 rounded-full transition focus-visible:outline-2 focus-visible:outline-offset-4";
 
 const MENU_DISC =
-  "flex size-12 items-center justify-center rounded-full bg-white text-black transition group-hover:bg-white/90 group-active:scale-[0.98]";
+  "flex size-12 items-center justify-center rounded-full transition group-active:scale-[0.98]";
 
 const BAR = "flex w-full items-center justify-between gap-6 px-gutter py-4";
 
-export function SiteNav() {
+export function SiteNav({ tone = "media" }: { tone?: SiteNavTone } = {}) {
+  const palette = TONES[tone];
+
   // isMounted spans the panel's whole visible life, including the retract;
   // isRevealed is the wipe itself, armed a frame after the panel lands.
   const [isMounted, setIsMounted] = useState(false);
@@ -168,19 +196,28 @@ export function SiteNav() {
     body.style.overflow = "hidden";
     if (gutter > 0) body.style.paddingRight = `${gutter}px`;
 
+    // Lenis owns the document's scroll now, and it keeps its own scroll value
+    // running off wheel and touch whatever overflow says — so hiding the
+    // overflow is no longer enough on its own to hold the page still.
+    stopSmoothScroll();
+
     window.addEventListener("keydown", onKeyDown);
 
     return () => {
       window.removeEventListener("keydown", onKeyDown);
       body.style.overflow = previous.overflow;
       body.style.paddingRight = previous.paddingRight;
+      startSmoothScroll();
     };
   }, [isMounted]);
 
   return (
     <>
       <nav className={`relative ${BAR}`}>
-        <Link href="/" className={WORDMARK}>
+        <Link
+          href="/"
+          className={`${WORDMARK} ${palette.ink} ${palette.outline}`}
+        >
           kairos studio
         </Link>
 
@@ -189,15 +226,17 @@ export function SiteNav() {
         <button
           ref={openButtonRef}
           type="button"
-          className={MENU_BUTTON}
+          className={`${MENU_BUTTON} ${palette.outline}`}
           aria-expanded={isRevealed}
           aria-controls="site-menu"
           onClick={openMenu}
         >
-          <span className="text-body font-medium whitespace-nowrap text-white">
+          <span
+            className={`text-body font-medium whitespace-nowrap ${palette.ink}`}
+          >
             Menu
           </span>
-          <span className={MENU_DISC}>
+          <span className={`${MENU_DISC} ${palette.disc}`}>
             <MenuIcon />
           </span>
         </button>

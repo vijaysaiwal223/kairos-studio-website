@@ -1,0 +1,20 @@
+.scrollReveal {
+  transform-origin: 0% 50%;
+}
+
+.text {
+  display: block;
+}
+
+.word {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollReveal,
+  .word {
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+}

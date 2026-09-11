@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { ProjectEditorial } from "@/components/project-editorial";
 import { ProjectShowcase } from "@/components/project-showcase";
 import { PROJECTS, getProject } from "@/lib/projects";
 
 /**
- * A project's showcase page.
- * Figma: "PROJECT PAGE", node 139:865
+ * A project's page.
+ * Figma: "PROJECT PAGE", nodes 139:865 and 299:948
  *
- * Every project in src/lib/projects.ts is prerendered at build time from the
- * one template. dynamicParams stays off so a slug with no record 404s rather
- * than rendering an empty page.
+ * The design has drawn the project page twice and they are two different
+ * pages, so there are two templates and the record says which one it is. Every
+ * project in src/lib/projects.ts is prerendered at build time from whichever
+ * it names. dynamicParams stays off so a slug with no record 404s rather than
+ * rendering an empty page.
  */
 
 export const dynamicParams = false;
@@ -50,5 +53,9 @@ export default async function ProjectPage({
 
   if (!project) notFound();
 
-  return <ProjectShowcase project={project} />;
+  return project.layout === "editorial" ? (
+    <ProjectEditorial project={project} />
+  ) : (
+    <ProjectShowcase project={project} />
+  );
 }

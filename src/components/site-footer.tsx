@@ -19,10 +19,10 @@ import { TextReveal } from "./text-reveal";
 
 /** Node 219:1989. The nav's own links less Home, which the wordmark covers. */
 const SITE_LINKS = [
-  { label: "Projects", href: "#projects" },
-  { label: "Architects", href: "#architects" },
-  { label: "About us", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Projects", href: "/#projects" },
+  { label: "Architects", href: "/#architects" },
+  { label: "About us", href: "/#about" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 /** Node 219:1994. */
@@ -75,6 +75,7 @@ export function SiteFooter() {
                     alt=""
                     width={40}
                     height={40}
+                    loading="lazy"
                   />
                 </a>
               </li>

@@ -3,13 +3,14 @@ import Image from "next/image";
 import { ArchitectBadge } from "./architect-badge";
 import { ImageReveal } from "./image-reveal";
 import { TextReveal } from "./text-reveal";
+import ScrollReveal from "./ui/scroll-reveal";
 import { HeroVideo } from "./hero-video";
 import { ProjectPlans } from "./project-plans";
 import { SiteNav } from "./site-nav";
 import {
   COLLAGE_FRAME,
   CONTENT_WIDTH,
-  type Project,
+  type ShowcaseProject,
   type ProjectImage,
   type SpecIconName,
 } from "@/lib/projects";
@@ -80,7 +81,11 @@ const sizesFor = (drawnWidth: number) =>
     drawnWidth / CONTENT_WIDTH
   ).toFixed(4)})`;
 
-export function ProjectShowcase({ project }: { project: Project }) {
+export function ProjectShowcase({
+  project,
+}: {
+  project: ShowcaseProject;
+}) {
   return (
     <>
       <main className="ps-page">
@@ -146,12 +151,26 @@ export function ProjectShowcase({ project }: { project: Project }) {
               ))}
             </dl>
 
-            <TextReveal className="ps-overview-copy">
-              <h2 className="ps-overview-heading">
+            <div className="ps-overview-copy">
+              <ScrollReveal
+                rotationEnd="top 52%"
+                wordAnimationEnd="center 52%"
+                containerClassName="ps-overview-heading"
+              >
                 {project.overview.heading}
-              </h2>
-              <p className="ps-overview-body">{project.overview.body}</p>
-            </TextReveal>
+              </ScrollReveal>
+              <ScrollReveal
+                as="p"
+                baseOpacity={0.16}
+                baseRotation={1.25}
+                blurStrength={3}
+                rotationEnd="top 58%"
+                wordAnimationEnd="bottom 42%"
+                containerClassName="ps-overview-body"
+              >
+                {project.overview.body}
+              </ScrollReveal>
+            </div>
           </section>
 
           <ProjectPlans drawings={project.plans.drawings} />
@@ -211,11 +230,21 @@ export function ProjectShowcase({ project }: { project: Project }) {
             />
           </figure>
 
-          <TextReveal className="ps-closing">
+          <div className="ps-closing">
             {project.closing.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
+              <ScrollReveal
+                key={index}
+                as="p"
+                baseOpacity={0.16}
+                baseRotation={1}
+                blurStrength={3}
+                rotationEnd="top 58%"
+                wordAnimationEnd="bottom 42%"
+              >
+                {paragraph}
+              </ScrollReveal>
             ))}
-          </TextReveal>
+          </div>
         </div>
       </main>
 

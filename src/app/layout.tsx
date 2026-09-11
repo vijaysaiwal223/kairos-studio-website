@@ -1,50 +1,50 @@
 import type { Metadata } from "next";
-import { Pinyon_Script } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { SiteFooter } from "@/components/site-footer";
+import { SmoothScroll } from "@/components/smooth-scroll";
 
 /**
- * ITC Avant Garde Gothic Pro is the single typeface for the whole site.
+ * Beausite Fit Trial is the single typeface for the whole site.
  *
- * The four supplied faces are mapped onto the standard CSS weight steps so the
- * normal Tailwind utilities resolve to a real face and the browser never has to
- * synthesise one:
- *   Book (OS/2 300, the family's text weight) -> 400  font-normal
- *   Medium                                    -> 500  font-medium
- *   Demi  (shipped as "ITC Semibold.otf")     -> 600  font-semibold
- *   Bold                                      -> 700  font-bold
+ * The family ships three faces here, mapped onto the CSS weight steps the site
+ * already asks for so the browser never has to synthesise one:
+ *   Regular -> 400  font-normal
+ *   Medium  -> 500  font-medium
+ *   Bold    -> 600  font-semibold  and  700  font-bold
+ *
+ * Bold is listed twice on purpose. The site was built against ITC Avant Garde
+ * Gothic Pro, which carried a Demi between Medium and Bold, so its headings
+ * ask for 600 — including the nav wordmark and section headings.
+ * Beausite has no Demi and the design sets every one of those in Bold, so 600
+ * is pointed at the real Bold face rather than left to be synthesised.
  */
-const avantGarde = localFont({
+const beausite = localFont({
   src: [
-    { path: "../../public/font/ITC Book.otf", weight: "400", style: "normal" },
     {
-      path: "../../public/font/ITC Medium.otf",
+      path: "../../public/font/BeausiteFitTrial-Regular-BF6424edbf3b5a2.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/font/BeausiteFitTrial-Medium-BF6424edbf043fd.otf",
       weight: "500",
       style: "normal",
     },
     {
-      path: "../../public/font/ITC Semibold.otf",
+      path: "../../public/font/BeausiteFitTrial-Bold-BF6424edbf2ecf2.otf",
       weight: "600",
       style: "normal",
     },
-    { path: "../../public/font/ITC Bold.otf", weight: "700", style: "normal" },
+    {
+      path: "../../public/font/BeausiteFitTrial-Bold-BF6424edbf2ecf2.otf",
+      weight: "700",
+      style: "normal",
+    },
   ],
-  variable: "--font-avant-garde",
+  variable: "--font-beausite",
   display: "swap",
   fallback: ["Helvetica Neue", "Arial", "sans-serif"],
-});
-
-/**
- * Pinyon Script is the one exception to the ITC-only rule: the design calls for
- * it by name for the script word in the "high-end interiors & exteriors Design"
- * heading (Figma node 12:164), and no weight of Avant Garde can stand in for it.
- */
-const pinyonScript = Pinyon_Script({
-  variable: "--font-pinyon-script",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -64,11 +64,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${avantGarde.variable} ${pinyonScript.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${beausite.variable} h-full antialiased`}>
       <body className="min-h-full">
+        {/* Renders nothing. Takes over the document's scrolling and puts
+            ScrollTrigger on the same clock — see the component. */}
+        <SmoothScroll />
+
         {children}
 
         {/* Site chrome, so every route gets it — including ones added later

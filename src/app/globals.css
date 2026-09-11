@@ -14,11 +14,6 @@
   --canvas: #fefefd;
   --hero-subtext: #ececec;
 
-  /* Our capabilities section tokens (Figma: node 22:376) */
-  --capability-intro: #525252;
-  --capability-idle: #b3b3b3;
-  --capability-rule: #d7d7d7;
-
   /* ─── Type scale ────────────────────────────────────────────────────────
      Every size the design uses, and nothing else. Named for the job the type
      is doing rather than its size, so a component asks for "body" and cannot
@@ -42,6 +37,10 @@
   --type-wordmark-lh: 29px;
   --type-lead: 24px; /* section headings and lead copy */
   --type-lead-lh: 32px;
+  --type-fact: 14px; /* the editorial page's fact strip, and nothing else */
+  --type-fact-lh: 20px;
+  --type-headline: 40px; /* editorial page title and its closing heading */
+  --type-headline-lh: 48px;
   --type-menu: clamp(2rem, 3.3333vw, 3rem); /* 48px, nav overlay */
   --type-menu-lh: 1.3333;
   --type-display: clamp(
@@ -56,15 +55,22 @@
     5rem
   ); /* 80px, stacked labels */
   --type-display-loose-lh: 1.2;
-  --type-script: clamp(3.75rem, 8.3333vw, 7.5rem); /* 120px, Pinyon accent */
-  --type-script-lh: 0.6667;
-
   /* Project showcase tokens (Figma: node 139:865) */
   --canvas-warm: #fff9f5;
   --spec-label: #52525b;
   --spec-rule: #d6d6d6;
   --thumb-rule: #dfdfdf;
+  --thumb-hover: #b3b3b3;
 
+  /* Editorial project page tokens (Figma: node 299:948) */
+  --editorial-copy: #464646;
+  --drawing-rule: #848484;
+
+  /* Home page tokens (Figma: node 288:146) */
+  --hairline: #e7e7e7;
+  --ink-ground: #151717;
+  --ink-rule: #383a3a;
+  --hero-subtext-dim: #dfdfdf;
   /* Footer tokens (Figma: node 179:1605) */
   --footer-ink: #000000;
   --footer-text: #e7e7e7;
@@ -72,14 +78,10 @@
   --footer-muted: #848484;
   --footer-wordmark: #2f2f2f;
 
-  /* About section tokens (Figma: node 152:1203) */
-  --about-ink: #362e2e;
   --ps-closing-gap: 463px;
 
-  /* Design services section tokens (Figma: node 12:156) */
+  /* Loading screen ink. */
   --heading-ink: #3b1b1b;
-  --script-gold: #c7984e;
-  --body-muted: #6a6a6a;
 }
 
 @theme inline {
@@ -90,10 +92,6 @@
   --color-foreground: var(--foreground);
   --color-canvas: var(--canvas);
   --color-hero-subtext: var(--hero-subtext);
-
-  --color-capability-intro: var(--capability-intro);
-  --color-capability-idle: var(--capability-idle);
-  --color-capability-rule: var(--capability-rule);
 
   /* Exposed as text-caption / text-body / text-display etc., each carrying
      its own line height, so the pair can never be split up at a call site. */
@@ -109,27 +107,24 @@
   --text-wordmark--line-height: var(--type-wordmark-lh);
   --text-lead: var(--type-lead);
   --text-lead--line-height: var(--type-lead-lh);
+  --text-fact: var(--type-fact);
+  --text-fact--line-height: var(--type-fact-lh);
+  --text-headline: var(--type-headline);
+  --text-headline--line-height: var(--type-headline-lh);
   --text-menu: var(--type-menu);
   --text-menu--line-height: var(--type-menu-lh);
   --text-display: var(--type-display);
   --text-display--line-height: var(--type-display-lh);
   --text-display-loose: var(--type-display-loose);
   --text-display-loose--line-height: var(--type-display-loose-lh);
-  --text-script: var(--type-script);
-  --text-script--line-height: var(--type-script-lh);
-
   --color-canvas-warm: var(--canvas-warm);
+  --color-editorial-copy: var(--editorial-copy);
   --color-spec-label: var(--spec-label);
-  --color-about-ink: var(--about-ink);
 
   --color-heading-ink: var(--heading-ink);
-  --color-script-gold: var(--script-gold);
-  --color-body-muted: var(--body-muted);
 
-  /* ITC Avant Garde Gothic Pro carries the site; Pinyon Script is used only
-     for the script word in the design services heading. */
-  --font-sans: var(--font-avant-garde);
-  --font-script: var(--font-pinyon-script);
+  /* Beausite Fit Trial carries the whole site. */
+  --font-sans: var(--font-beausite);
 }
 
 /* Both the loading screen and the project hero hold the page still by taking
@@ -144,25 +139,6 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-}
-
-/* The veil is the full width of the thumbnail and slides in from the left, so
-   its right edge (the white playhead) tracks progress across the frame. */
-@keyframes hero-slide-progress {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-/* GSAP owns the scatter timeline (see scatter-reveal.tsx). This only stops the
-   section flashing its finished state before ScrollTrigger initialises; GSAP
-   then drives opacity and transform inline. */
-[data-scatter-item],
-[data-reveal-item] {
-  opacity: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -241,216 +217,6 @@ body {
   line-height: var(--type-caption-lh);
   font-weight: 500;
   color: #dfdfdf;
-}
-
-/* ─── 02 Featured projects ────────────────────────────────────────────────
-   Layout for the pinned, scroll-scrubbed project slides. The wipe itself is
-   written frame-by-frame by featured-projects-stage.tsx; everything here is
-   the resting geometry it animates away from. All proportions are
-   viewport-relative so the composition holds at any window size. */
-
-.fp-section {
-  position: relative;
-  /* One viewport of scroll per transition, plus one to hold the first slide.
-     Intentionally vh, not dvh: dvh changes as mobile browser chrome hides,
-     which would resize the pinned range mid-scrub. */
-  height: calc(var(--fp-slides, 3) * 100vh);
-  /* The section that follows paints above this one, so it can slide over the
-     stage at 1x while the stage climbs away at 0.5x. */
-  z-index: 0;
-  background: #000;
-}
-
-.fp-stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
-  /* Keeps the slides compositing among themselves and not against the page. */
-  isolation: isolate;
-  background: #000;
-}
-
-/* Every slide is clipped by the one shared wipe line. The default below is the
-   pre-hydration state: slide one at rest, the rest fully clipped away. */
-.fp-slide {
-  position: absolute;
-  inset: 0;
-  clip-path: inset(100% 0px 0px 0px);
-  will-change: clip-path;
-}
-
-.fp-slide:first-of-type {
-  clip-path: inset(0px 0px 0px 0px);
-}
-
-/* The only layer inside a slide that translates. The 4vh bleed is pure
-   insurance against sub-pixel seams — the parallax maths already keeps the
-   image inside its clip window at every point of the wipe. */
-.fp-bg {
-  position: absolute;
-  left: 0;
-  top: -4vh;
-  width: 100%;
-  height: 108vh;
-  will-change: transform;
-}
-
-/* Scrim, per node 88:463. Static like the rest of the foreground: it belongs
-   to the type it protects, not to the render parallaxing underneath it. */
-.fp-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0));
-}
-
-/* Foreground — no transform of any kind, at rest or in motion. The block is
-   centred by flex so a two-line title simply pushes the credit upward.
-   Its left edge is the shared site gutter, which is where the design's
-   left:calc(50% - 393.5px) with a -50% shift resolves to on the 1440 frame. */
-.fp-copy {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--site-gutter);
-  width: 573px;
-  max-width: calc(100% - var(--site-gutter) * 2);
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 40px;
-  color: #fff;
-}
-
-/* 80px on the 1440 frame, easing down on narrow viewports rather than
-   overflowing. line-height 1 keeps the design's 80/80 ratio at every size. */
-.fp-title {
-  font-size: var(--type-display);
-  line-height: var(--type-display-lh);
-  font-weight: 500;
-  text-align: left;
-}
-
-.fp-button {
-  display: inline-flex;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding-inline: 16px;
-  border-radius: 6px;
-  background: #fff;
-  color: #000;
-  font-size: var(--type-body);
-  line-height: var(--type-body-lh);
-  font-weight: 500;
-  white-space: nowrap;
-  box-shadow:
-    0 1px 2px 0 rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(0, 0, 0, 0.08);
-  transition:
-    background-color 200ms ease-out,
-    transform 140ms ease-out;
-}
-
-.fp-button:hover {
-  background: #f2f2f2;
-}
-
-/* Gives under the press, matching the pill buttons elsewhere on the site. */
-.fp-button:active {
-  transform: scale(0.97);
-}
-
-/* Location and counter both sit 32px off the bottom, on the site gutter. */
-.fp-meta {
-  position: absolute;
-  bottom: 32px;
-  font-size: var(--type-meta);
-  line-height: var(--type-meta-lh);
-  font-weight: 500;
-  color: var(--hero-subtext);
-}
-
-.fp-location {
-  left: var(--site-gutter);
-}
-
-.fp-counter {
-  right: var(--site-gutter);
-  display: flex;
-  gap: 8px;
-}
-
-/* Custom cursor. Position is written by the stage's rAF loop, which lerps it
-   toward the pointer so it trails on fast moves. */
-.fp-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9;
-  width: 46px;
-  height: 46px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 180ms ease-out;
-  will-change: transform;
-}
-
-/* The disc is a separate element from the one the rAF loop drives: that outer
-   transform is rewritten every frame, so a CSS transition on it would be
-   trampled before it could run. Scale lives here instead, free to ease. */
-.fp-cursor-dot {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: #fff;
-  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Swells over anything actionable and gives under a press, so the pointer
-   answers back instead of just tracking. */
-.fp-cursor[data-hot="true"] .fp-cursor-dot {
-  transform: scale(1.28);
-}
-
-.fp-cursor[data-pressed="true"] .fp-cursor-dot {
-  transform: scale(0.86);
-}
-
-.fp-cursor[data-hot="true"][data-pressed="true"] .fp-cursor-dot {
-  transform: scale(1.08);
-}
-
-.fp-cursor[data-visible="true"] {
-  opacity: 1;
-}
-
-.fp-cursor-glyph {
-  width: 16px;
-  height: 16px;
-  stroke: #171717;
-  stroke-width: 1;
-  stroke-linecap: butt;
-  fill: none;
-}
-
-/* Only swap the native cursor out where there is one to swap. */
-@media (pointer: fine) {
-  .fp-section,
-  .fp-section * {
-    cursor: none;
-  }
-}
-
-/* Touch and coarse pointers keep the system cursor and lose the follower. */
-@media (pointer: coarse) {
-  .fp-cursor {
-    display: none;
-  }
 }
 
 /* ─── Site menu reveal (Figma node 79:355) ────────────────────────────────
@@ -734,7 +500,7 @@ body {
 /* Only the thumbnails answer the pointer; the drawing on show is already
    where it belongs. */
 .ps-plan-cell:not([aria-current="true"]):hover {
-  border-color: var(--capability-idle);
+  border-color: var(--thumb-hover);
 }
 
 /* Borders are scaled by the swap transform along with everything else, which
@@ -896,7 +662,7 @@ body {
   }
 
   .ps-collage-item {
-    position: static;
+    position: relative;
     width: 100%;
     height: auto;
     aspect-ratio: var(--ps-ratio);
@@ -919,6 +685,1427 @@ body {
   .ps-page {
     --ps-closing-gap: 96px;
   }
+}
+
+/* ─── Editorial project page ──────────────────────────────────────────────
+   Figma: "PROJECT PAGE", node 299:948
+   https://www.figma.com/design/IgGKIxIUSVPAgpdPb8wGk1/Website?node-id=299-948
+
+   The site's second project template. Same 1440 frame and same 40px gutter as
+   the showcase, so horizontal dimensions are again written as their share of
+   the 1360px content column and the layout is exact at 1440 and scales whole
+   everywhere else. Each percentage carries the pixel value it came from.
+
+   Vertical rhythm stays in pixels, except inside the run — where the design
+   places everything by hand on one tall box, so the box scales and the blocks
+   scale with it. Copy is the exception to the exception; see .pe-copy. */
+
+.pe-page {
+  background: var(--background);
+}
+
+/* Hero, node 299:949. Drawn 1440x900 — the screen, so it is written as the
+   screen. svh for the same reason the showcase hero uses it: the small
+   viewport height does not move as mobile browser chrome comes and goes.
+
+   Two elements, not one: .pe-hero is the scroll track and .pe-hero-stage is
+   the screenful that sticks to the top of it. With no frame sequence the two
+   are the same height and the stickiness never comes up. With one, the track
+   grows to --pe-track screenfuls and the stage stays put while they are
+   scrolled through, which is the scrub. Note that the track must not clip its
+   own overflow — that would kill the sticky — so the clipping, the stacking
+   context and the black under the picture all belong to the stage. */
+.pe-hero {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+}
+
+.pe-hero--scrub {
+  height: calc(var(--pe-track, 3) * 100vh);
+  height: calc(var(--pe-track, 3) * 100svh);
+}
+
+.pe-hero-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: #000;
+}
+
+.pe-hero-bg {
+  position: absolute;
+  inset: 0;
+}
+
+/* Frame one, and the only thing the hero paints until the canvas has a frame
+   of its own — so it is never blank, on any connection. */
+.pe-hero-poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Drawn over the poster and left transparent until it holds a frame, so the
+   handover is the same picture arriving twice rather than a swap. */
+.pe-hero-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.pe-hero-canvas[data-painting="true"] {
+  opacity: 1;
+}
+
+/* Node 299:951. Transparent to black over the bottom half of the frame, not
+   left to right as the showcase's is — the copy sits on the floor here, so
+   that is the only part of the photograph that has to carry type. */
+.pe-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 50.373%, #000);
+}
+
+/* Over the render (node 299:952), so the hero reads full-bleed from the first
+   pixel — the same arrangement the showcase hero uses. */
+.pe-hero-nav {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 2;
+}
+
+/* Node 299:959: the title block on the gutter and the typology against the
+   right one, both sitting on the floor of the frame. */
+.pe-hero-foot {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  padding: var(--site-gutter);
+  color: #fff;
+}
+
+/* Node 310:1405. 557 of the 1360 column. */
+.pe-hero-copy {
+  display: flex;
+  width: 40.9559%;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* TextReveal wraps the title and the summary in one block, so the 12px the
+   column puts between its children has to be repeated inside it. */
+.pe-hero-type {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Node 310:1409. 40px, not the showcase's 80 — this hero carries a paragraph
+   and a badge as well, and the design sets the title to match them. */
+.pe-title {
+  font-size: var(--type-headline);
+  line-height: var(--type-headline-lh);
+  font-weight: 700;
+  letter-spacing: -0.8px;
+}
+
+.pe-summary {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: -0.32px;
+}
+
+/* Node 299:964. Drawn 20/28 — the one place the site sets 20px on anything
+   but the 32px the subhead token carries, so the height is set here rather
+   than given a token of its own for a single label. */
+.pe-typology {
+  flex: none;
+  font-size: var(--type-subhead);
+  line-height: 28px;
+  letter-spacing: -0.4px;
+  color: var(--hero-subtext);
+}
+
+/* Facts strip, node 346:2. Five values spread across the column, 200 above
+   and 200 below, over the outline of the site. */
+.pe-facts {
+  position: relative;
+  padding: 200px var(--site-gutter);
+  overflow: clip;
+}
+
+/* Node 346:23, drawn 320x268 with its left edge 577.44 across the frame.
+   Left as drawn in pixels rather than scaled with the column: it is a hairline
+   ornament, and scaling it would thicken or lose the stroke. */
+.pe-facts-outline {
+  position: absolute;
+  top: 104px;
+  left: 40.1%;
+  width: 320px;
+  height: 268px;
+}
+
+.pe-facts-list {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0;
+  font-size: var(--type-fact);
+  line-height: var(--type-fact-lh);
+  color: #000;
+}
+
+.pe-fact dd {
+  margin: 0;
+}
+
+/* The run, node 299:987. One 1360x7338 box with everything placed inside it,
+   the way the showcase's collage is — the composition scales as one drawing
+   rather than snapping between breakpoints. */
+.pe-run {
+  position: relative;
+  margin-inline: var(--site-gutter);
+  aspect-ratio: 1360 / 7338;
+}
+
+/* Geometry arrives as custom properties rather than as inline left/top/width/
+   height, so the stacked rules at the foot of this block can still override
+   it — an inline style would outrank them. */
+.pe-plate {
+  position: absolute;
+  left: var(--pe-x);
+  top: var(--pe-y);
+  width: var(--pe-w);
+  height: var(--pe-h);
+  overflow: hidden;
+}
+
+/* Where the design crops a plate by hand instead of centring it, the record
+   carries an object-position and the figure passes it down. Next's fill mode
+   writes its own inline style over the image, so it has to arrive this way. */
+.pe-plate > img {
+  object-position: var(--pe-pos, 50% 50%);
+}
+
+/* Copy is pinned by its BOTTOM edge, not its top.
+
+   Everything else in the run scales with the frame. Copy does not — the site
+   holds text at its drawn pixel size on purpose — so as the column narrows the
+   same words take more lines and the block grows past the slot it was drawn
+   in. Anchored by its last line, that growth goes up into the whitespace the
+   design leaves above every one of these blocks, instead of down onto the
+   photograph beneath it. */
+.pe-copy {
+  position: absolute;
+  left: var(--pe-x);
+  bottom: var(--pe-b);
+  width: var(--pe-w);
+}
+
+/* Node 310:1350, on the introduction and nowhere else. */
+.pe-copy-heading {
+  margin-bottom: 12px;
+  font-size: var(--type-lead);
+  line-height: var(--type-lead-lh);
+  font-weight: 700;
+  letter-spacing: -0.48px;
+  color: #000;
+}
+
+.pe-copy-body {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: -0.32px;
+  color: var(--editorial-copy);
+}
+
+/* The drawing stage sits on the run's frame like everything else, so it stays
+   where it was drawn rather than following the last photograph. */
+.pe-drawings-slot {
+  position: absolute;
+  left: var(--pe-x);
+  top: var(--pe-y);
+  width: var(--pe-w);
+  height: var(--pe-h);
+}
+
+.pe-drawings {
+  position: relative;
+  height: 100%;
+}
+
+/* Node 310:1397: 565 of the stage's 704. */
+.pe-drawing-main {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 80.2557%;
+  border: 1px solid var(--drawing-rule);
+}
+
+/* Nodes 310:1399-310:1403, hung below the main frame: three cells and two
+   16px gaps come to the drawn 672 of the stage's 1130. Unlike the showcase's
+   rail this one lists every drawing, including the one on show. */
+.pe-drawing-rail {
+  position: absolute;
+  left: 0;
+  top: 84.8011%;
+  display: flex;
+  width: 59.469%;
+  height: 15.1989%;
+  gap: 2.381%;
+}
+
+.pe-drawing-thumb {
+  position: relative;
+  flex: 1 1 0;
+  height: 100%;
+  border: 1px solid var(--drawing-rule);
+  cursor: pointer;
+}
+
+/* The design draws no selected state, because on its rail there is nothing to
+   select — see the note in project-drawings.tsx. With every drawing listed,
+   the one on show takes the page's ink for its frame. */
+.pe-drawing-thumb[aria-current="true"] {
+  border-color: var(--foreground);
+}
+
+.pe-drawing-thumb:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* Below the width the run can hold its composition.
+
+   1200, not the 900 the rest of the site stacks at, and the run is the reason.
+   Its paragraphs keep their 16px while the frame around them shrinks, so each
+   one grows taller than the slot it was drawn in as the column narrows —
+   .pe-copy sends that growth upward, but there is only so much room above.
+   1200 is the width at which the longest of them, the eleven-line
+   introduction, still clears the photograph below it. Under that the
+   composition is given up wholesale and the run becomes a single column,
+   where the question cannot arise. */
+@media (max-width: 1200px) {
+  .pe-hero,
+  .pe-hero--scrub,
+  .pe-hero-stage {
+    height: 640px;
+  }
+
+  .pe-hero-foot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .pe-hero-copy {
+    width: 100%;
+  }
+
+  .pe-facts {
+    padding-block: 96px;
+  }
+
+  .pe-facts-list {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 16px 32px;
+  }
+
+  /* It sits behind the row; once the row wraps over it, it is noise. */
+  .pe-facts-outline {
+    display: none;
+  }
+
+  .pe-run {
+    display: flex;
+    aspect-ratio: auto;
+    flex-direction: column;
+    gap: 64px;
+  }
+
+  .pe-plate {
+    position: relative;
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--pe-ratio);
+  }
+
+  .pe-copy,
+  .pe-drawings-slot {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+
+  /* The stage gives up its fixed drawing: the chosen drawing goes full width
+     and the rail becomes a row of thumbnails beneath it. */
+  .pe-drawings {
+    display: flex;
+    height: auto;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pe-drawing-main {
+    position: relative;
+    height: auto;
+    aspect-ratio: 1130 / 565;
+  }
+
+  .pe-drawing-rail {
+    position: static;
+    width: 100%;
+    height: auto;
+    gap: 8px;
+  }
+
+  .pe-drawing-thumb {
+    height: auto;
+    aspect-ratio: 213 / 107;
+  }
+
+}
+
+/* HeroSequence does not scrub for a reader who has asked for less motion, so
+   the track it would have scrubbed across is given back. */
+@media (prefers-reduced-motion: reduce) {
+  .pe-hero--scrub {
+    height: 100vh;
+    height: 100svh;
+  }
+}
+
+/* ─── Home page ───────────────────────────────────────────────────────────
+   Figma: "HOME PAGE", node 288:146
+   https://www.figma.com/design/IgGKIxIUSVPAgpdPb8wGk1/Website?node-id=288-146
+
+   Drawn on the same 1440 frame and the same 40px gutter as the rest of the
+   site. Where a width is a share of the 1360 content column it is written as
+   that percentage, with the pixel value it came from; vertical rhythm stays in
+   pixels, on the design's own 80/120 steps. */
+
+/* Shared by every band: the small tracked-out label, the 40/48 heading and
+   the grey body, in their light-ground and dark-ground forms. */
+.hp-eyebrow {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: 1.92px;
+  text-transform: uppercase;
+  color: var(--editorial-copy);
+}
+
+.hp-eyebrow-light {
+  color: #fff;
+}
+
+.hp-heading {
+  font-size: var(--type-headline);
+  line-height: var(--type-headline-lh);
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  color: #000;
+}
+
+.hp-heading-light {
+  color: #fff;
+}
+
+.hp-body {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: -0.32px;
+  color: var(--editorial-copy);
+}
+
+.hp-body-light {
+  color: var(--hero-subtext-dim);
+}
+
+/* ── Masthead, node 390:1387 ─────────────────────────────────────────────
+   The 1440x1200 design is one full-bleed scene. Its height follows the frame's
+   6:5 proportion until 1200px, while a viewport minimum keeps the composition
+   useful on tall and narrow screens. */
+.hp-hero {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: min(83.3333vw, 1200px);
+  min-height: 100svh;
+  overflow: hidden;
+  background: #dbe4ef;
+  color: #fff;
+}
+
+.hp-hero-visual,
+.hp-hero-media,
+.hp-hero-fade,
+.hp-hero-clouds {
+  position: absolute;
+  inset: 0;
+}
+
+.hp-hero-visual {
+  z-index: -1;
+  overflow: hidden;
+}
+
+.hp-hero-media {
+  inset: -4% -2%;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+.hp-hero-image {
+  object-fit: cover;
+  object-position: 50% 100%;
+}
+
+/* The image fill in the Figma node carries this fade from 82.2% to white. */
+.hp-hero-fade {
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    transparent 81.8%,
+    rgba(255, 255, 255, 0.38) 91%,
+    #fff 100%
+  );
+}
+
+.hp-hero-clouds {
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Every cloud is the same 1024x435 cutout, drawn 797x339 on the 1440 frame. */
+.hp-hero-cloud {
+  position: absolute;
+  top: 88%;
+  display: block;
+  width: 55.3472%;
+  aspect-ratio: 1024 / 435;
+  will-change: transform;
+}
+
+.hp-hero-cloud--one {
+  left: -12.0833%;
+}
+
+.hp-hero-cloud--two {
+  left: 33.5417%;
+}
+
+.hp-hero-cloud--three {
+  left: 63.4028%;
+}
+
+.hp-hero-cloud--three .hp-hero-cloud-image {
+  transform: rotate(180deg);
+}
+
+.hp-hero-cloud--four {
+  left: 4.5833%;
+}
+
+.hp-hero-cloud--five {
+  left: 65.9028%;
+}
+
+.hp-hero-cloud--six {
+  left: 42.5%;
+}
+
+.hp-hero-cloud-image {
+  object-fit: contain;
+}
+
+.hp-hero-nav {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 4;
+}
+
+/* Node 390:1396. 700 wide, centred, and 160px from the top of 1200. */
+.hp-hero-copy {
+  position: absolute;
+  inset: 13.3333% 0 auto;
+  z-index: 3;
+  display: flex;
+  width: 700px;
+  max-width: calc(100% - var(--site-gutter) * 2);
+  margin-inline: auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+  will-change: transform, opacity;
+}
+
+.hp-hero-label {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.hp-hero-title {
+  font-size: var(--type-headline);
+  line-height: var(--type-headline-lh);
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  color: #fff;
+}
+
+.hp-hero-blurb {
+  width: 100%;
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: -0.32px;
+  color: #fff;
+}
+
+.hp-hero-cta {
+  display: inline-flex;
+  min-width: 118px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 99px;
+  background: #e7e7e7;
+  color: #000;
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  transition: background-color 220ms ease, color 220ms ease,
+    transform 220ms ease;
+}
+
+.hp-hero-cta:hover {
+  background: #fff;
+  transform: translateY(-2px);
+}
+
+.hp-hero-cta:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.hp-hero-cta:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+/* ── The network, node 288:186 ───────────────────────────────────────────── */
+.hp-network {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  padding-block: 120px;
+  background: var(--background);
+}
+
+.hp-network-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding-inline: var(--site-gutter);
+}
+
+/* 443 of the 1360 column. */
+.hp-network-label {
+  display: flex;
+  width: 32.5735%;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 557 of the 1360 column. */
+.hp-network-aside {
+  display: flex;
+  width: 40.9559%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+/* Node 298:721. Hung from the top, which is what staggers the names. */
+.hp-architects {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding-inline: var(--site-gutter);
+}
+
+.hp-architect {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* The drawn height, as a ratio of the drawn card width, so a portrait keeps
+   its proportion instead of its pixels as the row narrows. */
+.hp-architect-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 328 / var(--hp-card-h, 450);
+  overflow: hidden;
+}
+
+.hp-architect-name {
+  font-size: var(--type-subhead);
+  line-height: var(--type-subhead-lh);
+  font-weight: 500;
+  letter-spacing: -0.4px;
+  color: #000;
+}
+
+/* Node 298:752, the 8px pair inside the card's 24px column. */
+.hp-architect-name-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hp-architect-role {
+  font-size: var(--type-fact);
+  line-height: var(--type-fact-lh);
+  letter-spacing: -0.28px;
+  color: #000;
+}
+
+/* ── What we offer, node 295:481 ─────────────────────────────────────────
+   Opaque, and painting above the pinned project stage that precedes it — see
+   the note in featured-projects-section. */
+.hp-offer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 120px;
+  padding-block: 120px;
+  background: var(--ink-ground);
+}
+
+/* Node 295:494. */
+.hp-offer-label {
+  display: flex;
+  width: 700px;
+  max-width: calc(100% - var(--site-gutter) * 2);
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.hp-offer-list {
+  width: 100%;
+}
+
+/* Node 295:508. The rules are drawn on every row's bottom edge and on the
+   first row's top, which is one rule between each pair and one above the set. */
+.hp-offer-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 120px;
+  padding: 48px var(--site-gutter);
+  border-bottom: 1px solid var(--ink-rule);
+  isolation: isolate;
+}
+
+.hp-offer-row:first-child {
+  border-top: 1px solid var(--ink-rule);
+}
+
+/* The photograph the design draws behind row one. Held back until the row is
+   pointed at, because a picture on one row of six reads as a state, not as a
+   property of that row. Fades rather than cuts, and sits under everything. */
+.hp-offer-media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 420ms ease-out;
+}
+
+.hp-offer-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+@media (hover: hover) {
+  .hp-offer-row:hover .hp-offer-media {
+    opacity: 1;
+  }
+}
+
+/* Node 297:684. */
+.hp-offer-count {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #fff;
+  border-radius: 99px;
+  background: #000;
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: -0.32px;
+  color: #fff;
+}
+
+/* Node 295:510, drawn at a flat 320px. */
+.hp-offer-body {
+  width: 320px;
+  flex: none;
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: -0.32px;
+  color: #fff;
+}
+
+/* Node 295:509. 56/64 on the 1440 frame, easing down rather than overflowing
+   on a narrower one — "Approvals & Compliance" is the long one to watch. */
+.hp-offer-title {
+  min-width: 0;
+  flex: 1 1 0;
+  font-size: clamp(2rem, 3.8889vw, 3.5rem);
+  line-height: 1.1429;
+  font-weight: 700;
+  letter-spacing: -1.12px;
+  color: #fff;
+}
+
+/* ── Different contexts, node 295:559 ────────────────────────────────────── */
+.hp-services {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  padding-block: 120px;
+  background: var(--ink-ground);
+}
+
+.hp-services-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding-inline: var(--site-gutter);
+}
+
+.hp-services-label {
+  display: flex;
+  width: 32.5735%;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hp-services-aside {
+  display: flex;
+  width: 40.9559%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.hp-service-cards {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  padding-inline: var(--site-gutter);
+}
+
+/* Node 295:589, drawn 500 tall across a third of the column. */
+.hp-service-card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+  justify-content: flex-end;
+  aspect-ratio: 442 / 500;
+  padding: 32px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hp-service-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), #000);
+}
+
+.hp-service-copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #fff;
+}
+
+.hp-service-title {
+  font-size: var(--type-lead);
+  line-height: var(--type-lead-lh);
+  font-weight: 500;
+  letter-spacing: -0.48px;
+}
+
+.hp-service-body {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: -0.32px;
+}
+
+/* Below the width the drawn rows and columns stop working. The two-column
+   bands stack, the four portraits become two, the three cards become one, and
+   the collage gives up its placed composition for a single column — each
+   picture keeping the ratio it was drawn at, passed down as --hp-ratio. */
+@media (max-width: 1000px) {
+  .hp-network-head,
+  .hp-services-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .hp-network-label,
+  .hp-network-aside,
+  .hp-services-label,
+  .hp-services-aside {
+    width: 100%;
+  }
+
+  .hp-architects {
+    flex-wrap: wrap;
+    gap: 32px 16px;
+  }
+
+  .hp-architect {
+    flex-basis: calc(50% - 8px);
+  }
+
+  .hp-network,
+  .hp-offer,
+  .hp-services {
+    gap: 64px;
+    padding-block: 96px;
+  }
+
+  .hp-offer-row {
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    padding-block: 32px;
+  }
+
+  .hp-offer-title {
+    flex-basis: 100%;
+    order: -1;
+  }
+
+  .hp-offer-body {
+    width: auto;
+    flex: 1 1 240px;
+  }
+
+  .hp-service-cards {
+    flex-direction: column;
+  }
+
+  /* flex: none matters. Stacked, the cards are in a column with no height of
+     its own, so the row's `flex: 1 1 0` would resolve their basis to zero and
+     the aspect-ratio would never get to set one. */
+  .hp-service-card {
+    flex: none;
+    aspect-ratio: 3 / 2;
+  }
+}
+
+@media (max-width: 700px) {
+  .hp-hero {
+    height: 100svh;
+    min-height: 720px;
+    max-height: 900px;
+  }
+
+  .hp-hero-copy {
+    inset-block-start: 19%;
+    max-width: calc(100% - 48px);
+  }
+
+  .hp-hero-title {
+    font-size: clamp(2rem, 9vw, 2.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.64px;
+  }
+
+  .hp-hero-blurb {
+    max-width: 34rem;
+    font-size: 15px;
+    line-height: 22px;
+  }
+
+  .hp-hero-media {
+    inset: -3% -28%;
+  }
+
+  .hp-hero-image {
+    object-position: 50% 100%;
+  }
+
+  .hp-hero-cloud {
+    top: 87%;
+    width: 104%;
+  }
+
+  .hp-hero-cloud--one {
+    left: -62%;
+  }
+
+  .hp-hero-cloud--two {
+    left: 2%;
+  }
+
+  .hp-hero-cloud--three {
+    left: 58%;
+  }
+
+  .hp-hero-cloud--four {
+    left: -24%;
+  }
+
+  .hp-hero-cloud--five {
+    left: 72%;
+  }
+
+  .hp-hero-cloud--six {
+    left: 30%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-hero-media,
+  .hp-hero-cloud,
+  .hp-hero-copy {
+    will-change: auto;
+  }
+}
+
+/* ─── The invitation ──────────────────────────────────────────────────────
+   Figma: node 299:1108 (project page) and node 299:926 (home page)
+
+   The same section on both, to the pixel — so it is one component and one
+   block here, rather than the same 900px of copy and office scene written
+   twice. Site copy rather than any one project's. */
+.invite {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 120px;
+}
+
+/* Node 299:1109, 700 wide and centred on the frame. */
+.invite-copy {
+  display: flex;
+  width: 700px;
+  max-width: calc(100% - var(--site-gutter) * 2);
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.invite-eyebrow {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: 1.92px;
+  text-transform: uppercase;
+  color: var(--editorial-copy);
+}
+
+.invite-heading {
+  font-size: var(--type-headline);
+  line-height: var(--type-headline-lh);
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  color: #000;
+}
+
+.invite-body {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: -0.32px;
+  color: var(--editorial-copy);
+}
+
+/* Node 299:1115. The design gives the section a flat 900 and lets the picture
+   take whatever is left of it — 466 once the copy and its two 120s are out.
+   Written as that ratio instead, so the section keeps the drawn proportion at
+   every width rather than squeezing the picture when the copy runs long. */
+.invite-figure {
+  position: relative;
+  width: 100%;
+  margin-top: 120px;
+  aspect-ratio: 1440 / 466;
+}
+
+@media (max-width: 1200px) {
+  .invite {
+    padding-top: 96px;
+  }
+
+  .invite-figure {
+    margin-top: 96px;
+    aspect-ratio: 3 / 2;
+  }
+}
+
+/* ─── Expanding gallery ───────────────────────────────────────────────────
+   Figma: nodes 297:705 (the collage) and 289:298 (the slide it becomes)
+
+   Two pinned screenfuls that read as one move: a collage that grows about its
+   own centre until the middle card has taken the whole viewport, and then the
+   same card cycling through the rest of the projects.
+
+   The geometry that matters is the symmetry. The hero is the middle child of a
+   row whose outer columns match each other and whose inner columns match each
+   other, so the row's centre and the hero's centre are the same point — which
+   is why scaling the row about 50% 50% grows the hero about the middle of the
+   screen and not off to one side. Break the symmetry and the hero drifts. */
+
+.expand-gallery {
+  position: relative;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--background);
+  isolation: isolate;
+}
+
+/* Wider than the screen before anything animates: 12 + 24 + 36 + 24 + 12 comes
+   to 108vw, so the outer columns start past both edges and the fan-out is
+   already there to be revealed rather than something that has to be staged. */
+.collage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transform-origin: 50% 50%;
+}
+
+.col {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.col--far-left,
+.col--far-right {
+  width: 12vw;
+}
+
+.col--left,
+.col--right {
+  width: 24vw;
+}
+
+.col__card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--card-ratio, 1);
+  overflow: hidden;
+}
+
+/* The centre card. 36vw at 4:5 puts the end scale near 2.8 on a 16:9 window —
+   but nothing here depends on that number; it is measured at runtime. */
+.hero {
+  position: relative;
+  flex: none;
+  width: 36vw;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+/* ── The preview, over the covered hero ─────────────────────────────────── */
+.preview {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  /* autoAlpha's resting state. Hidden rather than transparent, so none of it
+     is read out or hit-tested before the hero has arrived. */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preview__eyebrow,
+.preview__hint {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  font-size: var(--type-subhead);
+  line-height: 28px;
+  letter-spacing: -0.4px;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.preview__eyebrow {
+  left: var(--site-gutter);
+}
+
+.preview__hint {
+  right: var(--site-gutter);
+}
+
+.preview__plus {
+  position: absolute;
+  top: var(--site-gutter);
+  right: var(--site-gutter);
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 99px;
+  color: #fff;
+  font-size: var(--type-subhead);
+  line-height: 1;
+}
+
+/* Node 289:320, drawn 500 wide and centred on the frame.
+
+   Centred by the frame's grid, NOT by `translate: -50% -50%` on the card. GSAP
+   clears the independent translate/rotate/scale properties the moment it takes
+   an element's transforms over, and this card is tweened on y — so a card
+   centred that way loses its offset as soon as it animates and hangs off the
+   middle of the screen instead of sitting on it. Centring it from the parent
+   leaves the card's own transform free for GSAP to own outright. */
+.preview__card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 500px;
+  max-width: calc(100% - var(--site-gutter) * 2);
+  flex-direction: column;
+  align-items: center;
+  gap: 48px;
+  padding: 32px;
+  background: #fff;
+  color: #000;
+  text-align: center;
+}
+
+/* Every card is a link — it is the only way into a project from this section. */
+.preview__card.is-link {
+  pointer-events: auto;
+  transition:
+    transform 220ms ease-out,
+    box-shadow 220ms ease-out;
+}
+
+@media (hover: hover) {
+  .preview__card.is-link:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  }
+}
+
+.preview__card.is-link:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.preview__index {
+  font-size: var(--type-subhead);
+  line-height: 28px;
+  letter-spacing: -0.4px;
+  color: #4c4c4c;
+  white-space: nowrap;
+}
+
+.preview__title {
+  font-size: var(--type-lead);
+  line-height: var(--type-lead-lh);
+  letter-spacing: -0.48px;
+}
+
+/* Node 289:329, drawn 300 tall across the card's 436 of content. */
+.preview__thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 436 / 300;
+  overflow: hidden;
+}
+
+.preview__body {
+  font-size: var(--type-body);
+  line-height: var(--type-body-lh);
+  letter-spacing: -0.32px;
+  color: var(--editorial-copy);
+}
+
+/* ── The cycle ──────────────────────────────────────────────────────────
+   The projects live inside .preview, on the one pinned frame, so there is no
+   second section here and no handover between two pins to be seen. */
+/* Clipped rather than faded: a project waits fully clipped, is revealed by the
+   line sweeping up, and is erased the same way. clip-path clips hit-testing
+   too, so a waiting project cannot catch a click meant for the one on show. */
+.cycle__frame {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  clip-path: inset(100% 0% 0% 0%);
+}
+
+/* The one the preview opens on. It carries no background of its own: the hero
+   underneath it is already this project's photograph, covering the frame. */
+.cycle__frame[data-first] {
+  clip-path: inset(0% 0% 0% 0%);
+}
+
+/* Bled 1% past the frame on each edge. The background is translated a whole
+   viewport during its wipe, and a sub-pixel rounding at either end of that
+   would otherwise show as a hairline of the frame behind it. */
+.cycle__bg {
+  position: absolute;
+  inset: -1%;
+}
+
+/* Node 289:312's second fill. */
+.cycle__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Below the width the five columns stop being readable: the outer pair goes
+   and the hero takes more of the screen, over a shorter scroll. */
+@media (max-width: 1024px) {
+  .col--far-left,
+  .col--far-right {
+    display: none;
+  }
+
+  .col--left,
+  .col--right {
+    width: 26vw;
+  }
+
+  .hero {
+    width: 62vw;
+  }
+}
+
+/* And below this there is no collage at all — the hero starts full-bleed, so
+   the measured end scale comes out at 1 and the expansion is skipped without
+   anything having to special-case it. */
+@media (max-width: 640px) {
+  .col {
+    display: none;
+  }
+
+  .collage {
+    display: block;
+  }
+
+  .hero {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    aspect-ratio: auto;
+    border-radius: 0;
+  }
+
+  .preview__card {
+    gap: 24px;
+  }
+
+}
+
+/* No pin and no scrub for a reader who has asked for less motion — the section
+   is simply the state the move would have arrived at. ExpandingGallery builds
+   no timeline at all under this, so nothing here is being overridden. */
+@media (prefers-reduced-motion: reduce) {
+  .collage {
+    display: block;
+  }
+
+  .col {
+    display: none;
+  }
+
+  .hero {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    aspect-ratio: auto;
+    border-radius: 0;
+  }
+
+  .preview {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Every project becomes its own screenful, in flow. */
+  .preview {
+    position: static;
+  }
+
+  .cycle__frame {
+    position: relative;
+    height: 100vh;
+    clip-path: none;
+  }
+
+  .expand-gallery {
+    height: auto;
+  }
+}
+
+/* Lenis drives the document's scroll, and asks for these two. Without the
+   first the page cannot report its own height correctly; without the second a
+   smooth-scrolled anchor fights the browser's own jump. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }
 
 /* ─── Site footer ─────────────────────────────────────────────────────────
@@ -1246,116 +2433,6 @@ body {
   .loader-count {
     font-size: 32px;
     line-height: 40px;
-  }
-}
-
-/* ─── About ───────────────────────────────────────────────────────────────
-   Figma: "ABOUT SECTION", node 152:1203
-
-   Picture and copy side by side, centred against each other. 787 and 443 of
-   the 1360 column with 130 between: written as shares of that column, so the
-   pair keeps its proportions at any width. The 120 top and bottom is the
-   design's padding, and with the picture 550 tall it is what makes the drawn
-   790. */
-
-.about-section {
-  position: relative;
-  /* This is what slides over the pinned featured stage now, so it has to be
-     opaque and paint above it. The design leaves the frame unfilled and takes
-     the page's ground; that ground is painted on here for the same reason. */
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 120px var(--site-gutter);
-  background: var(--canvas);
-  color: var(--about-ink);
-}
-
-/* 787 of 1360. The ratio is the drawn 787x550, which gives the section its
-   height rather than the height being set. */
-.about-figure {
-  position: relative;
-  width: 57.8676%;
-  aspect-ratio: 787 / 550;
-  overflow: hidden;
-}
-
-/* 443 of 1360. The 9.56% left between the two is the design's 130. */
-.about-copy {
-  display: flex;
-  width: 32.5735%;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 40px;
-}
-
-/* Node 199:1858. The mark and the word sit on one line, 8 apart. */
-.about-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: var(--type-subhead);
-  line-height: var(--type-subhead-lh);
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-/* The mark is set lighter than the word it introduces, as drawn. */
-.about-label span {
-  font-weight: 500;
-}
-
-.about-body {
-  font-size: var(--type-body);
-  line-height: var(--type-body-lh);
-  font-weight: 500;
-}
-
-/* Node 217:1946. The same white pill the featured slides use, at the 8px
-   radius this one is drawn with. */
-.about-button {
-  display: inline-flex;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  padding-inline: 16px;
-  border-radius: 8px;
-  background: #fff;
-  font-size: var(--type-body);
-  line-height: var(--type-body-lh);
-  font-weight: 500;
-  white-space: nowrap;
-  box-shadow:
-    0 1px 2px 0 rgba(0, 0, 0, 0.12),
-    0 0 0 1px rgba(0, 0, 0, 0.08);
-  transition:
-    background-color 200ms ease-out,
-    transform 140ms ease-out;
-}
-
-.about-button:hover {
-  background: #f2f2f2;
-}
-
-/* Gives under the press, matching the pill buttons elsewhere on the site. */
-.about-button:active {
-  transform: scale(0.97);
-}
-
-@media (max-width: 900px) {
-  /* Below the width it was drawn for, the picture goes over the copy rather
-     than beside it. */
-  .about-section {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 48px;
-    padding-block: 72px;
-  }
-
-  .about-figure,
-  .about-copy {
-    width: 100%;
   }
 }
 

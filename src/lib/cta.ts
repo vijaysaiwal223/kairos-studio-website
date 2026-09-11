@@ -20,3 +20,25 @@ export const CTA_COLORS = {
   hoverFillBgColor: "#171717",
   hoverFillTextColor: "#ffffff",
 } as const;
+
+/**
+ * The same pill, inverted, for CTAs that sit on the page's own ground rather
+ * than on photography.
+ *
+ * A white pill needs the photograph behind it to be seen. The invitation at
+ * the foot of the editorial project page (Figma node 299:1113) is drawn on
+ * white, and the design duly draws that button in ink — so the pill and its
+ * fill trade places, and the arrow reverses out of the white.
+ *
+ * Kept beside CTA_COLORS rather than written at the call site for the reason
+ * given above: there are two grounds on this site, so there are two palettes,
+ * and both of them live here.
+ */
+export const CTA_COLORS_INK = {
+  bgColor: "#171717",
+  textColor: "#ffffff",
+  fillBgColor: "#ffffff",
+  fillTextColor: "#171717",
+  hoverFillBgColor: "#ffffff",
+  hoverFillTextColor: "#171717",
+} as const;

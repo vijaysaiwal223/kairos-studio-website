@@ -38,7 +38,8 @@ import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
  */
 
 /** What counts as prose. Deliberately excludes table-ish and label text. */
-const TARGETS = "h1, h2, h3, h4, p";
+const TARGETS =
+  "h1:not([data-scroll-reveal]), h2:not([data-scroll-reveal]), h3:not([data-scroll-reveal]), h4:not([data-scroll-reveal]), p:not([data-scroll-reveal])";
 
 type TextRevealProps = {
   children: ReactNode;

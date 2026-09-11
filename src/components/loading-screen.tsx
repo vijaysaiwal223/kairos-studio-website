@@ -478,7 +478,7 @@ export function LoadingScreen({ src }: LoadingScreenProps) {
               src={frame.src}
               alt=""
               fill
-              sizes="60vw"
+              sizes="45vw"
               quality={60}
               loading="eager"
               className="object-cover"

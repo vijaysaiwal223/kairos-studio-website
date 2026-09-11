@@ -1,5 +1,18 @@
 /**
- * Project records for the project showcase template.
+ * Project records.
+ *
+ * The design has drawn "PROJECT PAGE" twice, and the two are different pages
+ * rather than one page with different content — different hero, different
+ * facts, a different drawing rail, a different ending. So there are two
+ * templates, and a record says which one it is through `layout`:
+ *
+ *   "showcase"  node 139:865 — ProjectShowcase. Casa Pura Vida.
+ *   "editorial" node 299:948 — ProjectEditorial. House Klaus.
+ *
+ * Both share the slug/title/architect/hero head of the record, so the route
+ * can handle metadata and template selection without knowing either body.
+ *
+ * ─── The showcase template ───────────────────────────────────────────────
  *
  * Figma: "PROJECT PAGE", node 139:865
  * https://www.figma.com/design/IgGKIxIUSVPAgpdPb8wGk1/Untitled?node-id=139-865
@@ -8,8 +21,7 @@
  * Everything that changes from project to project lives in this file; the
  * geometry that does not lives in ProjectShowcase and the .ps-* block in
  * globals.css. Adding a project is one entry below plus its own folder under
- * public/projects/<slug>/ — the route and the sitemap build themselves from
- * PROJECTS, and the homepage's featured slides link to whatever is defined.
+ * public/projects/<slug>/ — the route builds itself from PROJECTS.
  *
  * Lengths below are the design's own pixel values on that 1440 frame. Nothing
  * consumes them as pixels: the showcase converts each one to a percentage of
@@ -84,7 +96,8 @@ export const PLAN_STAGE = {
   nav: { height: 24 },
 } as const;
 
-export type Project = {
+export type ShowcaseProject = {
+  layout: "showcase";
   slug: string;
   /** Shown in the hero, the tab title and the featured slide. */
   title: string;
@@ -107,8 +120,6 @@ export type Project = {
    * the still alone.
    */
   hero: ProjectImage & { video?: string };
-  /** The homepage featured-slide render. A different frame from the hero. */
-  featured: ProjectImage;
   specs: SpecRow[];
   overview: { heading: string; body: string };
   /**
@@ -131,7 +142,8 @@ export type Project = {
   closing: string[];
 };
 
-const CASA_PURA_VIDA: Project = {
+const CASA_PURA_VIDA: ShowcaseProject = {
+  layout: "showcase",
   slug: "casa-pura-vida",
   title: "Casa Pura Vida",
   location: "Madrid, Spain",
@@ -148,10 +160,6 @@ const CASA_PURA_VIDA: Project = {
     // The still is frame one of this footage, so playback starts from exactly
     // the image the poster paints and there is no jump when it begins.
     video: "/projects/casa-pura-vida/hero.mp4",
-  },
-  featured: {
-    src: "/projects/casa-pura-vida/featured.jpg",
-    alt: "Palm-shaded house with a curved timber canopy beside a pool",
   },
   specs: [
     { icon: "architects", label: "Architects", value: "Zozaya Arquitectos" },
@@ -260,8 +268,322 @@ const CASA_PURA_VIDA: Project = {
   ],
 };
 
-/** Every project with a showcase page, in the order they should be listed. */
-export const PROJECTS: Project[] = [CASA_PURA_VIDA];
+/* ─── The editorial template ───────────────────────────────────────────────
+ *
+ * Figma: "PROJECT PAGE", node 299:948
+ * https://www.figma.com/design/IgGKIxIUSVPAgpdPb8wGk1/Website?node-id=299-948
+ *
+ * Drawn on the same 1440 frame as the showcase, but the body is not a stack of
+ * sections: node 299:987 is one 1360x7338 box with photographs and paragraphs
+ * placed across it by hand, overlapping and staggering. So the run below is
+ * carried the way the showcase's collage already is — every block keeps the
+ * rectangle it was drawn in, as a share of the frame, and the whole
+ * composition scales as one drawing.
+ *
+ * The one thing that does not scale with it is the copy. The site holds text
+ * at its drawn pixel size on purpose (see the type scale in globals.css), so
+ * a narrower column gives the same words more lines and a paragraph grows
+ * taller than the slot it was drawn in. Which is why copy carries `bottom`
+ * rather than `y`: it is pinned by its last line, and the growth goes up into
+ * the whitespace the design leaves above every one of these blocks instead of
+ * down onto the photograph beneath it.
+ */
+
+/** The box the run's blocks are measured inside (node 299:987). */
+export const EDITORIAL_FRAME = { width: CONTENT_WIDTH, height: 7338 } as const;
+
+/**
+ * A photograph in the run, as drawn in EDITORIAL_FRAME coordinates — measured
+ * from the left edge of the content column, so each x is the drawn coordinate
+ * less the 40px site gutter.
+ */
+export type EditorialPlate = ProjectImage & {
+  kind: "plate";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  /**
+   * Figma's "Fit" rather than "Fill" — the whole frame is shown and the box
+   * takes the letterboxing. Set on the cutaway, which must not be cropped.
+   */
+  contain?: boolean;
+};
+
+/** A paragraph in the run. See the note above on why this is bottom-anchored. */
+export type EditorialCopy = {
+  kind: "copy";
+  x: number;
+  width: number;
+  /** The drawn BOTTOM edge of the block, not its top. */
+  bottom: number;
+  /** The design gives only the first block a heading (node 310:1350). */
+  heading?: string;
+  body: string;
+};
+
+/**
+ * One thing in the run.
+ *
+ * Photographs and paragraphs are one list rather than two, and the list is in
+ * the order the page reads top to bottom — which on the drawn frame is the
+ * order they are placed in, and below the width where that frame stacks is the
+ * order they appear in. Two lists would render every picture and then every
+ * paragraph once stacked.
+ */
+export type EditorialBlock = EditorialPlate | EditorialCopy;
+
+/**
+ * The drawing stage at the foot of the run (nodes 310:1397–310:1403).
+ *
+ * Unlike the showcase's rail, this one lists every drawing including the one
+ * in the main frame — the design draws the first thumbnail as a copy of what
+ * is showing. Three equal cells and two 16px gaps come to the drawn 672px.
+ */
+export const EDITORIAL_DRAWINGS = {
+  main: { x: 115, y: 6316, width: 1130, height: 565 },
+  rail: { x: 115, y: 6913, width: 672, height: 107, gap: 16 },
+} as const;
+
+export type EditorialProject = {
+  layout: "editorial";
+  slug: string;
+  title: string;
+  location: string;
+  /** Hero paragraph under the title (node 310:1407). */
+  summary: string;
+  /** Bottom-right of the hero (node 299:964). Not drawn on the showcase. */
+  typology: string;
+  architect: {
+    name: string;
+    /** The practice's own base, not the project's location. */
+    base: string;
+    portrait: string;
+  };
+  /**
+   * Full-bleed 1440x900 hero (node 299:950).
+   *
+   * `src` is the still: what paints first, and what Open Graph is given. Give
+   * `sequence` a folder of frames and the hero becomes a scroll-scrubbed shot
+   * instead — see HeroSequence, and note that the still has to be frame one of
+   * that sequence or the canvas will jump when it takes over.
+   */
+  hero: ProjectImage & {
+    sequence?: {
+      /** Folder of zero-padded frames, 0001.webp upward. */
+      dir: string;
+      count: number;
+      /** Screenfuls of scroll the scrub is spread over, the first included. */
+      track: number;
+    };
+  };
+  /**
+   * The strip under the hero (node 346:2): five values spread across the
+   * column with no labels drawn, over the site outline. The labels below are
+   * not drawn either — they are read out and nothing else, so that "480 m²"
+   * is not announced on its own.
+   */
+  facts: { label: string; value: string }[];
+  /** The site outline the strip is set over (node 346:23). */
+  siteOutline: string;
+  /** The run itself, in reading order. */
+  blocks: EditorialBlock[];
+  /** The drawing set. The first entry is what the main frame opens on. */
+  drawings: ProjectImage[];
+};
+
+const HOUSE_KLAUS: EditorialProject = {
+  layout: "editorial",
+  slug: "house-klaus",
+  title: "House Klaus",
+  location: "Western Cape, South Africa",
+  summary:
+    "The project brief called for the design of a contemporary six-bedroom coastal residence on a steeply sloping site within the Romansbaai Estate.",
+  typology: "Private Residence",
+  architect: {
+    name: "Neo Architects",
+    base: "Western Cape, South Africa",
+    // The one portrait the design uses for every architect on the site.
+    portrait: "/images/architect-portrait.png",
+  },
+  hero: {
+    // Frame one of the sequence below, so the still the page opens on and the
+    // first frame the canvas draws are the same picture.
+    src: "/projects/house-klaus/hero.jpg",
+    alt: "The entry walk of the house, stone paving between planting and a stone wall",
+    sequence: {
+      dir: "/projects/house-klaus/hero-sequence",
+      count: 121,
+      track: 3,
+    },
+  },
+  facts: [
+    { label: "Architects", value: "Neo Architects" },
+    { label: "Area", value: "480 m²" },
+    { label: "Location", value: "Western Cape, South Africa" },
+    { label: "Year", value: "2025" },
+    { label: "Typology", value: "Private residence" },
+  ],
+  siteOutline: "/projects/house-klaus/site-outline.svg",
+  // In reading order, which on the drawn frame is also placement order.
+  blocks: [
+    {
+      kind: "copy",
+      x: 803,
+      width: 557,
+      // Drawn 120..428: a 32px heading, the 12px gap and eleven lines of 24.
+      bottom: 428,
+      heading: "Introduction",
+      body: "The project brief called for the design of a contemporary six-bedroom coastal residence on a steeply sloping site within the Romansbaai Estate. The client's vision was to maximise panoramic sea views while creating a home that responds sensitively to the site's topography, prevailing winds and strict height restrictions. The residence was required to integrate generous indoor and outdoor living spaces, wellness facilities, guest accommodation and sustainable design strategies, including solar energy, rainwater harvesting and green roofs. The architectural response sought to balance luxury with environmental sensitivity, producing a durable, low-maintenance home that seamlessly connects with the surrounding fynbos landscape and evolving coastal context.",
+    },
+    {
+      kind: "plate",
+      src: "/projects/house-klaus/coastal-slope.jpg",
+      alt: "The house on its fynbos slope, glazed gable turned to the open sea",
+      x: 0,
+      y: 548,
+      width: 1360,
+      height: 473,
+      // Node 310:1312 is cropped by hand: its imageTransform fits the source
+      // to the width and takes the band 63.37% of the way down the overflow.
+      position: "50% 63.37%",
+    },
+    {
+      kind: "copy",
+      x: 0,
+      width: 557,
+      // Drawn 1141..1309, seven lines.
+      bottom: 1309,
+      body: "The architectural concept is founded on the idea of Fragmented Living—a collection of distinct spatial volumes carefully composed to respond to the site's dramatic topography, panoramic ocean views, and indigenous landscape. Rather than presenting the residence as a single monolithic form, the programme is broken into a series of interconnected pavilions that separate public, private, and recreational functions while maintaining a unified architectural language.",
+    },
+    {
+      kind: "plate",
+      src: "/projects/house-klaus/pool-terrace.jpg",
+      alt: "A parasol on the pool deck, the terrace running out to a glass balustrade above the bay",
+      x: 803,
+      y: 1253,
+      width: 557,
+      height: 835,
+    },
+    {
+      kind: "plate",
+      src: "/projects/house-klaus/green-roof-pavilion.jpg",
+      alt: "A glazed pavilion under a low gable, its roof and terrace planted with fynbos",
+      x: 0,
+      y: 1531,
+      width: 787,
+      height: 557,
+    },
+    {
+      kind: "copy",
+      x: 803,
+      width: 557,
+      // Drawn 2274..2466, eight lines.
+      bottom: 2466,
+      body: "A central circulation spine serves as the organising element of the house, physically and visually linking these fragmented spaces into a cohesive whole. This connective axis extends beyond the building envelope, reinforcing the relationship between architecture and landscape and encouraging a seamless transition between interior and exterior living. Courtyards, terraces and framed vistas become integral components of the spatial experience, allowing the surrounding fynbos and coastline to permeate the home.",
+    },
+    {
+      kind: "plate",
+      src: "/projects/house-klaus/entry-walk.jpg",
+      alt: "The entry walk, stone paving set in gravel between a rubble wall and planting",
+      x: 0,
+      y: 2466,
+      width: 672,
+      height: 616,
+    },
+    {
+      kind: "plate",
+      src: "/projects/house-klaus/outdoor-living.jpg",
+      alt: "The sheltered outdoor room, its seating turned to the fire and the pool beyond",
+      x: 688,
+      y: 2625,
+      width: 672,
+      height: 457,
+    },
+    {
+      kind: "copy",
+      x: 0,
+      width: 557,
+      // Drawn 3252..3420, seven lines. The axonometric below starts 44px
+      // before this block ends; they overlap in the drawing too, on the white
+      // margin the drawing carries down its left side.
+      bottom: 3420,
+      body: "The building is carefully embedded within the steep site, stepping with the natural contours to minimise visual impact, satisfy height restrictions, and reduce the extent of excavation. Green roofs and retained landscape further soften the building's presence, enabling the architecture to become an extension of the terrain rather than an object placed upon it. The result is a contemporary coastal residence that balances openness with shelter, celebrates the unique qualities of its setting, and creates a sequence of connected yet intimate living environments.",
+    },
+    {
+      kind: "plate",
+      src: "/projects/house-klaus/axonometric-site.jpg",
+      alt: "Axonometric of the house set into its slope, the pavilions read as separate volumes",
+      x: 229,
+      y: 3376,
+      width: 1131,
+      height: 566,
+    },
+    {
+      kind: "plate",
+      src: "/projects/house-klaus/axonometric-cutaway.jpg",
+      alt: "Cutaway axonometric with the roofs lifted, showing the rooms and the circulation spine",
+      x: 0,
+      y: 4079,
+      width: 1016,
+      height: 581,
+      contain: true,
+    },
+    {
+      kind: "copy",
+      x: 803,
+      width: 557,
+      // Drawn 4604..4796, eight lines.
+      bottom: 4796,
+      body: "The section demonstrates how the building responds to the site's natural slope while complying with the estate's height restrictions. Stepped floor levels organise the programme across the terrain, creating clear relationships between the living spaces, private accommodation and outdoor terraces. Double-volume spaces enhance natural daylight and spatial connectivity, while the circulation spine links the fragmented building volumes into a cohesive whole. The section also highlights the integration of the built form with the surrounding landscape and green roofs.",
+    },
+    {
+      kind: "plate",
+      src: "/projects/house-klaus/seaward-view.jpg",
+      alt: "The house from the seaward side, low against the fynbos above the surf",
+      x: 0,
+      y: 4916,
+      width: 1360,
+      height: 400,
+      // Node 310:1393, cropped the same way: 69.05% down the overflow.
+      position: "50% 69.05%",
+    },
+    {
+      kind: "plate",
+      src: "/projects/house-klaus/approach.jpg",
+      alt: "The approach, the garage cut into the slope below the planted roofs and the sea",
+      x: 0,
+      y: 5396,
+      width: 1360,
+      height: 800,
+      // Node 310:1395 keeps the foot of the frame rather than its middle.
+      position: "50% 100%",
+    },
+  ],
+  drawings: [
+    {
+      src: "/projects/house-klaus/section-long.jpg",
+      alt: "Long section through the house, its floors stepping down the slope under gabled roofs",
+    },
+    {
+      src: "/projects/house-klaus/elevation-approach.jpg",
+      alt: "Elevation from the approach, the house cut into the slope above the garage",
+    },
+    {
+      src: "/projects/house-klaus/elevation-seaward.jpg",
+      alt: "Sectional elevation of the seaward face, two living levels under the long roof",
+    },
+  ],
+};
+
+/**
+ * A project, whichever template it renders through. The route reads the
+ * shared head, while ProjectShowcase and ProjectEditorial narrow the body.
+ */
+export type Project = ShowcaseProject | EditorialProject;
+
+/** Every project with a page, in the order they should be listed. */
+export const PROJECTS: Project[] = [CASA_PURA_VIDA, HOUSE_KLAUS];
 
 export function getProject(slug: string): Project | undefined {
   return PROJECTS.find((project) => project.slug === slug);
