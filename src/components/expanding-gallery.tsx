@@ -11,8 +11,10 @@ import {
   EXPAND_HERO,
   FEATURED,
 } from "@/lib/featured";
-import { ELEMENTIS_PLACEHOLDER } from "@/lib/home";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+
+const HOME_FEATURED_BODY =
+  "Each project begins with a specific way of living, a particular landscape and a clear point of view. The result is architecture that belongs nowhere else.";
 
 /**
  * The expanding collage, and the project cycle it hands over to.
@@ -328,6 +330,8 @@ export function ExpandingGallery() {
               // It ends up covering the viewport at roughly 2.8x, so it is
               // asked for at the size it finishes at, not the size it starts.
               sizes="100vw"
+              loading="eager"
+              fetchPriority="low"
               className="object-cover"
             />
           </figure>
@@ -354,6 +358,8 @@ export function ExpandingGallery() {
                     alt={project.background.alt}
                     fill
                     sizes="100vw"
+                    loading="eager"
+                    fetchPriority="low"
                     className="object-cover"
                   />
                 </div>
@@ -408,6 +414,8 @@ function CollageColumn({
             alt=""
             fill
             sizes="20vw"
+            loading="eager"
+            fetchPriority="low"
             className="object-cover"
           />
         </figure>
@@ -441,11 +449,12 @@ function PreviewCard({
           alt=""
           fill
           sizes="436px"
+          loading="eager"
+          fetchPriority="low"
           className="object-cover"
         />
       </span>
-      {/* Placeholder in the design — see the note in lib/home.ts. */}
-      <span className="preview__body">{ELEMENTIS_PLACEHOLDER}</span>
+      <span className="preview__body">{HOME_FEATURED_BODY}</span>
     </>
   );
 

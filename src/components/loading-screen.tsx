@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { getSmoothScroll, startSmoothScroll, stopSmoothScroll } from "@/lib/smooth-scroll";
 
 /**
  * The first-load screen.
@@ -198,9 +199,13 @@ export function LoadingScreen({ src }: LoadingScreenProps) {
     // The page must not scroll underneath while it is covered.
     const previousOverflow = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
+    stopSmoothScroll();
+    getSmoothScroll()?.scrollTo(0, { immediate: true, force: true });
+    window.scrollTo(0, 0);
 
     const release = () => {
       document.documentElement.style.overflow = previousOverflow;
+      startSmoothScroll();
     };
 
     const markSeen = () => {
@@ -298,6 +303,29 @@ export function LoadingScreen({ src }: LoadingScreenProps) {
       let reelSettled = frames.length === 0;
       let closing = false;
       let reverted = false;
+      let landing: HTMLElement | null = null;
+
+      const matchHeader = () => {
+        const hero = document.querySelector<HTMLElement>(".hp-hero");
+        const visual = hero?.querySelector<HTMLElement>(".hp-hero-visual");
+        if (!hero || !visual) return;
+        landing?.remove();
+        landing = visual.cloneNode(true) as HTMLElement;
+        // Match the real hero's box, including its overscan, bottom crop,
+        // parallax transform, fade and clouds. The loader clips this taller
+        // composition to the viewport, exactly as the screen clips the hero.
+        Object.assign(landing.style, {
+          width: `${hero.clientWidth}px`,
+          height: `${hero.clientHeight}px`,
+          right: "auto",
+          bottom: "auto",
+          zIndex: "0",
+        });
+        landing.setAttribute("aria-hidden", "true");
+        plate.appendChild(landing);
+      };
+      const landingFrame = window.requestAnimationFrame(matchHeader);
+      window.addEventListener("resize", matchHeader);
 
       const closeIfReady = () => {
         if (closing || reverted) return;
@@ -415,9 +443,16 @@ export function LoadingScreen({ src }: LoadingScreenProps) {
         closeIfReady();
       };
 
+      // Native load can finish before the header's pixels are decoded.
+      // Wait for the exact images used by the final composition as well.
+      pageSettled = false;
+      const headerImages = Array.from(
+        document.querySelectorAll<HTMLImageElement>(".hp-hero-visual img"),
+      );
+      void Promise.allSettled(headerImages.map((img) => img.decode())).then(onLoad);
+
       let safetyNet: gsap.core.Tween | null = null;
       if (!pageSettled) {
-        window.addEventListener("load", onLoad, { once: true });
         safetyNet = gsap.delayedCall(LOAD_PATIENCE, onLoad);
       }
 
@@ -426,6 +461,9 @@ export function LoadingScreen({ src }: LoadingScreenProps) {
         window.removeEventListener("load", onLoad);
         patience.kill();
         safetyNet?.kill();
+        window.cancelAnimationFrame(landingFrame);
+        window.removeEventListener("resize", matchHeader);
+        landing?.remove();
       };
     });
 

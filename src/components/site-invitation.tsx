@@ -16,17 +16,17 @@ import { TextReveal } from "./text-reveal";
  *
  * Geometry lives in the .invite* block in globals.css.
  */
-export function SiteInvitation() {
+export function SiteInvitation({ preloadImage = false }: { preloadImage?: boolean }) {
   return (
     <section id="contact" className="invite">
       <TextReveal className="invite-copy">
-        <p className="invite-eyebrow">Introduction</p>
+        <p className="invite-eyebrow">Start a conversation</p>
         <ScrollReveal
           rotationEnd="top 52%"
           wordAnimationEnd="center 52%"
           containerClassName="invite-heading"
         >
-          Tell us about your site.
+          Tell us what you want to make.
         </ScrollReveal>
         <ScrollReveal
           as="p"
@@ -37,8 +37,8 @@ export function SiteInvitation() {
           wordAnimationEnd="bottom 42%"
           containerClassName="invite-body"
         >
-          A short conversation about the plot, the brief and the budget.
-          We&rsquo;ll tell you honestly whether we&rsquo;re the right fit.
+          Share your site, your brief and the ambition behind it. We will tell
+          you honestly how we can help and whether we are the right partner.
         </ScrollReveal>
 
         {/* The design draws a plain ink pill (nodes 299:1113 and 299:943).
@@ -59,6 +59,8 @@ export function SiteInvitation() {
           alt="Two people working at a long timber desk in a daylit studio lined with shelves"
           fill
           sizes="100vw"
+          loading={preloadImage ? "eager" : "lazy"}
+          fetchPriority={preloadImage ? "low" : "auto"}
           className="object-cover"
         />
       </figure>

@@ -38,6 +38,8 @@ export function ArchitectBadge({ name, base, portrait }: ArchitectBadgeProps) {
             alt=""
             width={40}
             height={40}
+            loading="eager"
+            fetchPriority="low"
             className="size-full object-cover"
           />
         </span>

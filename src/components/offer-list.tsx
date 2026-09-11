@@ -24,17 +24,17 @@ export function OfferList() {
   return (
     <section className="hp-offer">
       <TextReveal className="hp-offer-label">
-        <p className="hp-eyebrow hp-eyebrow-light">What we offer</p>
+        <p className="hp-eyebrow hp-eyebrow-light">What we do</p>
         <ScrollReveal
           rotationEnd="top 52%"
           wordAnimationEnd="center 52%"
           containerClassName="hp-heading hp-heading-light"
         >
-          Access, and accountability.
+          One vision. One accountable team.
         </ScrollReveal>
         <p className="hp-body hp-body-light">
-          Six things we take responsibility for. Matching without delivery is a
-          directory. Delivery without the network is a contractor. We do both.
+          We bring the right people around the table, protect the original idea
+          through every decision and take responsibility for making it real.
         </p>
       </TextReveal>
 

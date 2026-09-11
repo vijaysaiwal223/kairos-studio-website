@@ -1285,35 +1285,6 @@ body {
   color: #fff;
 }
 
-.hp-hero-cta {
-  display: inline-flex;
-  min-width: 118px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  border-radius: 99px;
-  background: #e7e7e7;
-  color: #000;
-  font-size: var(--type-body);
-  line-height: var(--type-body-lh);
-  transition: background-color 220ms ease, color 220ms ease,
-    transform 220ms ease;
-}
-
-.hp-hero-cta:hover {
-  background: #fff;
-  transform: translateY(-2px);
-}
-
-.hp-hero-cta:active {
-  transform: translateY(0) scale(0.98);
-}
-
-.hp-hero-cta:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 4px;
-}
-
 /* ── The network, node 288:186 ───────────────────────────────────────────── */
 .hp-network {
   display: flex;
@@ -1503,6 +1474,20 @@ body {
   color: #fff;
 }
 
+/* ── Global network ───────────────────────────────────────────────────── */
+.hp-global-network { display: flex; flex-direction: column; align-items: center; gap: 72px; padding: 120px var(--site-gutter); background: var(--ink-ground); border-top: 1px solid var(--ink-rule); }
+.hp-global-network-copy { display: flex; width: 700px; max-width: 100%; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.world-map { position: relative; width: 100%; aspect-ratio: 2 / 1; overflow: hidden; }
+.world-map-dots, .world-map-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.world-map-dots { background-position: center; background-repeat: no-repeat; background-size: cover; opacity: 0.75; mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent); }
+.world-map-svg { overflow: visible; }
+.world-map-location { cursor: crosshair; }
+.world-map-location > circle:first-child { pointer-events: all; }
+.world-map-pulse { transform-origin: center; transform-box: fill-box; animation: world-map-pulse 2.4s ease-out infinite; }
+.world-map-label { display: flex; height: 100%; align-items: center; color: #fff; font-family: var(--font-beausite), sans-serif; font-size: 11px; font-weight: 500; line-height: 1; letter-spacing: 0.04em; text-shadow: 0 1px 8px #101211; }
+.world-map-tooltip { position: absolute; inset: auto auto 16px 16px; margin: 0; color: rgba(255, 255, 255, 0.58); font-size: 12px; letter-spacing: 0.02em; }
+@keyframes world-map-pulse { 0% { transform: scale(1); opacity: 0.65; } 70%, 100% { transform: scale(4); opacity: 0; } }
+
 /* ── Different contexts, node 295:559 ────────────────────────────────────── */
 .hp-services {
   display: flex;
@@ -1618,6 +1603,11 @@ body {
     padding-block: 96px;
   }
 
+  .hp-global-network {
+    gap: 48px;
+    padding-block: 96px;
+  }
+
   .hp-offer-row {
     flex-wrap: wrap;
     gap: 16px 24px;
@@ -1715,6 +1705,11 @@ body {
   .hp-hero-copy {
     will-change: auto;
   }
+
+  .world-map-pulse {
+    animation: none;
+  }
+
 }
 
 /* ─── The invitation ──────────────────────────────────────────────────────

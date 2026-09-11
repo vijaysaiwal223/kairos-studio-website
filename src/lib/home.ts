@@ -59,28 +59,28 @@ type Offering = { title: string; body: string; image?: string };
 export const OFFERINGS: Offering[] = [
   {
     title: "Architect Matching",
-    body: "Practices across Europe, Japan, Latin America and Africa, matched to your site, budget and taste.",
+    body: "We identify the practice whose approach, experience and sensibility best fit your site.",
     image: "/home/offer-architect-matching.jpg",
   },
   {
     title: "Design Management",
-    body: "Briefing, iteration and feasibility — protecting the design intent through every round of change.",
+    body: "We turn a brief into a considered design process, keeping every decision focused and moving.",
   },
   {
     title: "Approvals & Compliance",
-    body: "Indian codes, consultants, authorities and statutory approvals, handled without redrawing the idea.",
+    body: "We navigate local requirements, consultants and authorities without losing what made the design special.",
   },
   {
     title: "Technical Integration",
-    body: "Structure, MEP, façade, lighting and interiors coordinated into one buildable set of information.",
+    body: "Structure, services, lighting, interiors and material detail resolved as one coherent whole.",
   },
   {
     title: "Turnkey Construction",
-    body: "Budgets, procurement, vendors, specialists and site — delivered as one system, not a chain of contracts.",
+    body: "Budgets, procurement, specialists and site execution managed with rigour from beginning to handover.",
   },
   {
     title: "Aftercare",
-    body: "Snagging, rectification and a defined warranty period after you have moved in.",
+    body: "We stay involved after completion to ensure the place performs as beautifully as it was intended to.",
   },
 ];
 
@@ -88,13 +88,10 @@ export const OFFERINGS: Offering[] = [
  * Node 295:564. Placeholder copy: the design gives all three cards the same
  * paragraph, which is also the paragraph above them. Kept as drawn.
  */
-const SERVICE_BODY =
-  "Six things we take responsibility for. Matching without delivery is a directory. Delivery without the network is a contractor. We do both.";
-
 export const SERVICES = [
-  { title: "Interior Design", body: SERVICE_BODY, image: "/home/services/interior-design.jpg" },
-  { title: "Residential Design", body: SERVICE_BODY, image: "/home/services/residential-design.jpg" },
-  { title: "Commercial Design", body: SERVICE_BODY, image: "/home/services/commercial-design.jpg" },
+  { title: "Interior Design", body: "Spaces with character, precision and a strong sense of how they will be lived in.", image: "/home/services/interior-design.jpg" },
+  { title: "Residential Architecture", body: "Homes shaped around their site, their inhabitants and the rituals of everyday life.", image: "/home/services/residential-design.jpg" },
+  { title: "Commercial Spaces", body: "Environments that give a business presence, purpose and a lasting impression.", image: "/home/services/commercial-design.jpg" },
 ] as const;
 
 /**

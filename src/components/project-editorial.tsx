@@ -135,7 +135,8 @@ export function ProjectEditorial({ project }: { project: EditorialProject }) {
             aria-hidden
             width={320}
             height={268}
-            loading="lazy"
+            loading="eager"
+            fetchPriority="low"
             className="pe-facts-outline"
           />
 
@@ -173,6 +174,8 @@ export function ProjectEditorial({ project }: { project: EditorialProject }) {
                   alt={block.alt}
                   fill
                   sizes={sizesFor(block.width)}
+                  loading="eager"
+                  fetchPriority="low"
                   className={block.contain ? "object-contain" : "object-cover"}
                   data-image-reveal
                 />
@@ -247,7 +250,7 @@ export function ProjectEditorial({ project }: { project: EditorialProject }) {
 
         {/* Node 299:1108. The same section the home page ends on, so it is
             shared rather than written twice. */}
-        <SiteInvitation />
+        <SiteInvitation preloadImage />
 
       </main>
 

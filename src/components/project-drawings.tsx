@@ -26,10 +26,7 @@ import {
  * aria-current, which is what actually answers it for a screen reader.
  */
 
-const { main, rail } = EDITORIAL_DRAWINGS;
-
-/** The rail's three cells and their two gaps come to the drawn 672px. */
-const CELL_COUNT = 3;
+const { main } = EDITORIAL_DRAWINGS;
 
 /** The main frame is loaded at its own share of the column, never the rail's. */
 const DRAWING_SIZES = `(max-width: 1200px) 100vw, calc((100vw - var(--site-gutter) * 2) * ${(
@@ -49,6 +46,8 @@ export function ProjectDrawings({ drawings }: { drawings: ProjectImage[] }) {
           alt={shown.alt}
           fill
           sizes={DRAWING_SIZES}
+          loading="eager"
+          fetchPriority="low"
           className="object-contain"
           data-image-reveal
         />
@@ -68,9 +67,9 @@ export function ProjectDrawings({ drawings }: { drawings: ProjectImage[] }) {
               src={drawing.src}
               alt=""
               fill
-              sizes={`(max-width: 1200px) 33vw, calc((100vw - var(--site-gutter) * 2) * ${(
-                rail.width / CELL_COUNT / CONTENT_WIDTH
-              ).toFixed(4)})`}
+              sizes={DRAWING_SIZES}
+              loading="eager"
+              fetchPriority="low"
               className="object-contain"
             />
           </button>

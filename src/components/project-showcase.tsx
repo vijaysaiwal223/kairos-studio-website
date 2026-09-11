@@ -184,6 +184,8 @@ export function ProjectShowcase({
               alt={project.features.first.alt}
               fill
               sizes={sizesFor(CONTENT_WIDTH)}
+              loading="eager"
+              fetchPriority="low"
               className="object-cover"
               data-image-reveal
             />
@@ -209,6 +211,8 @@ export function ProjectShowcase({
                   alt={item.alt}
                   fill
                   sizes={sizesFor(item.width)}
+                  loading="eager"
+                  fetchPriority="low"
                   className="object-cover"
                   data-image-reveal
                 />
@@ -225,6 +229,8 @@ export function ProjectShowcase({
               alt={project.features.second.alt}
               fill
               sizes={sizesFor(CONTENT_WIDTH)}
+              loading="eager"
+              fetchPriority="low"
               className="object-cover"
               data-image-reveal
             />

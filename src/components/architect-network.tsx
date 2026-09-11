@@ -3,7 +3,7 @@ import Image from "next/image";
 import ArrowFillButton from "@/components/ui/arrow-fill-button";
 import ScrollReveal from "@/components/ui/scroll-reveal";
 import { CTA_COLORS_INK } from "@/lib/cta";
-import { ARCHITECTS, ELEMENTIS_PLACEHOLDER } from "@/lib/home";
+import { ARCHITECTS } from "@/lib/home";
 
 import { TextReveal } from "./text-reveal";
 
@@ -39,15 +39,18 @@ export function ArchitectNetwork() {
             wordAnimationEnd="center 52%"
             containerClassName="hp-heading"
           >
-            Architects you would not otherwise reach.
+            The right architect changes everything.
           </ScrollReveal>
         </div>
 
         <TextReveal className="hp-network-aside">
-          {/* Placeholder in the design — see the note in lib/home.ts. */}
-          <p className="hp-body">{ELEMENTIS_PLACEHOLDER}</p>
+          <p className="hp-body">
+            Your project deserves more than the nearest available practice. We
+            bring together distinctive architects from around the world and
+            match their thinking to your site, brief and ambitions.
+          </p>
           <ArrowFillButton
-            btnText="Learn more"
+            btnText="Meet the network"
             href="#contact"
             className="cta"
             {...CTA_COLORS_INK}

@@ -3,9 +3,10 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
+import { usePathname } from "next/navigation";
 
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
-import { setSmoothScroll } from "@/lib/smooth-scroll";
+import { getSmoothScroll, setSmoothScroll } from "@/lib/smooth-scroll";
 
 /**
  * Smooth scrolling, site-wide.
@@ -32,6 +33,8 @@ import { setSmoothScroll } from "@/lib/smooth-scroll";
  * is asking for, and ScrollTrigger works perfectly well without it.
  */
 export function SmoothScroll() {
+  const pathname = usePathname();
+
   useIsomorphicLayoutEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -64,6 +67,27 @@ export function SmoothScroll() {
       setSmoothScroll(null);
     };
   }, []);
+
+  useIsomorphicLayoutEffect(() => {
+    // Next 16 intentionally preserves the current scroll position when the
+    // next page is tall enough to remain visible at that offset. That is useful
+    // for list/detail interfaces, but a project is a new visual story and must
+    // always begin on its hero. Reset both the native document and Lenis before
+    // the new route paints, then repeat once on the next frame so neither
+    // Next's navigation pass nor Lenis's cached target can restore the old
+    // homepage position.
+    if (!pathname.startsWith("/projects/")) return;
+
+    const reset = () => {
+      getSmoothScroll()?.scrollTo(0, { immediate: true, force: true });
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    };
+
+    reset();
+    const frame = window.requestAnimationFrame(reset);
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname]);
 
   return null;
 }

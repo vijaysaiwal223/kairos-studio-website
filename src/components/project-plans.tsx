@@ -223,6 +223,8 @@ export function ProjectPlans({ drawings }: { drawings: ProjectImage[] }) {
                 alt={isActive ? drawing.alt : ""}
                 fill
                 sizes={PLAN_SIZES}
+                loading="eager"
+                fetchPriority="low"
                 className="object-cover"
                 data-image-reveal
               />

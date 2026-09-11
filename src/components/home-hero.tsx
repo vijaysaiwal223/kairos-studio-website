@@ -1,4 +1,5 @@
-import Link from "next/link";
+import ArrowFillButton from "@/components/ui/arrow-fill-button";
+import { CTA_COLORS } from "@/lib/cta";
 
 import { HomeHeroParallax } from "./home-hero-parallax";
 import { SiteNav } from "./site-nav";
@@ -26,18 +27,20 @@ export function HomeHero() {
       <div className="hp-hero-copy">
         <TextReveal trigger="load" className="hp-hero-label">
           <h1 className="hp-hero-title">
-            Designing for today and building for tomorrow
+            Architecture without borders. Delivered without compromise.
           </h1>
           <p className="hp-hero-blurb">
-            Kairos studio offers a full range of bespoke interior design
-            services — from initial concept and aesthetic counselling to
-            coordination, execution and magazine-worthy finishing touches.
+            We connect ambitious sites with exceptional architects, then lead
+            every detail from first brief to final handover.
           </p>
         </TextReveal>
 
-        <Link href="#contact" className="hp-hero-cta">
-          Get started
-        </Link>
+        <ArrowFillButton
+          btnText="Start a project"
+          href="#contact"
+          className="cta"
+          {...CTA_COLORS}
+        />
       </div>
     </section>
   );

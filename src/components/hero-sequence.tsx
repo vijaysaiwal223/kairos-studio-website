@@ -159,14 +159,13 @@ export function HeroSequence({ dir, count, poster, alt }: HeroSequenceProps) {
       }
     };
 
-    /**
-     * In order, one at a time. The reader meets these frames in this order, so
-     * fetching them in it means the scrub is sharp where they are looking
-     * first, and a stalled connection costs the end of the shot, not all of it.
-     */
+    // Four workers preserve request order while overlapping network latency
+    // and decoding, so the later frames are ready sooner during the scrub.
+    let nextFrame = 0;
     const load = async () => {
-      for (let i = 0; i < count; i += 1) {
+      while (nextFrame < count) {
         if (cancelled) return;
+        const i = nextFrame++;
         const img = new Image();
         img.decoding = "async";
         img.src = frameUrl(dir, i);
@@ -189,7 +188,9 @@ export function HeroSequence({ dir, count, poster, alt }: HeroSequenceProps) {
     };
 
     resize();
-    void load();
+    for (let worker = 0; worker < Math.min(4, count); worker += 1) {
+      void load();
+    }
     schedulePaint();
 
     window.addEventListener("scroll", schedulePaint, { passive: true });
@@ -219,7 +220,7 @@ export function HeroSequence({ dir, count, poster, alt }: HeroSequenceProps) {
           picture at a known size, and it has to be the very first byte the
           hero paints. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={poster} alt={alt} className="pe-hero-poster" />
+      <img src={poster} alt={alt} loading="eager" fetchPriority="high" className="pe-hero-poster" />
 
       <canvas
         ref={canvasRef}

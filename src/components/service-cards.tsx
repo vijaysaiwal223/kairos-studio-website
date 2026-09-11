@@ -26,21 +26,21 @@ export function ServiceCards() {
     <section className="hp-services">
       <div className="hp-services-head">
         <TextReveal className="hp-services-label">
-          <p className="hp-eyebrow hp-eyebrow-light">What we offer</p>
+          <p className="hp-eyebrow hp-eyebrow-light">Our expertise</p>
           <ScrollReveal
             rotationEnd="top 52%"
             wordAnimationEnd="center 52%"
             containerClassName="hp-heading hp-heading-light"
           >
-            Different contexts same standards
+            Different scales. The same standard.
           </ScrollReveal>
         </TextReveal>
 
         <TextReveal className="hp-services-aside">
           <p className="hp-body hp-body-light">
-            Six things we take responsibility for. Matching without delivery is
-            a directory. Delivery without the network is a contractor. We do
-            both.
+            From the intimacy of a home to the complexity of a commercial
+            space, we bring clarity, care and control to every stage of the
+            work.
           </p>
           {/* On the dark ground, so this is the white pill of the pair. */}
           <ArrowFillButton

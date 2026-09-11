@@ -1,5 +1,6 @@
 import { ArchitectNetwork } from "@/components/architect-network";
 import { ExpandingGallery } from "@/components/expanding-gallery";
+import { GlobalNetwork } from "@/components/global-network";
 import { HomeHero } from "@/components/home-hero";
 import { ImageReveal } from "@/components/image-reveal";
 import { LoadingScreen } from "@/components/loading-screen";
@@ -36,6 +37,7 @@ export default function Home() {
       <ExpandingGallery />
 
       <OfferList />
+      <GlobalNetwork />
       <ServiceCards />
       <SiteInvitation />
 

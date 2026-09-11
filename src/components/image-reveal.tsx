@@ -82,6 +82,40 @@ export function ImageReveal() {
     mm.add("(prefers-reduced-motion: no-preference)", () => {
       gsap.set(images, { clipPath: COVERED, willChange: "clip-path" });
 
+      let disposed = false;
+      const tweens = new Set<gsap.core.Tween>();
+
+      const revealWhenReady = async (arrived: HTMLElement[]) => {
+        // A wipe that completes before its image decodes reveals an empty
+        // frame, then the photograph pops in without animation. Project media
+        // is requested eagerly, and this final gate guarantees the transition
+        // still waits for real pixels on a slow connection or a fast scroll.
+        await Promise.allSettled(
+          arrived.map((element) => {
+            if (!(element instanceof HTMLImageElement)) return Promise.resolve();
+            if (element.complete && element.naturalWidth > 0) {
+              return Promise.resolve();
+            }
+            return element.decode();
+          }),
+        );
+
+        if (disposed) return;
+
+        const tween = gsap.to(arrived, {
+          ...WIPE,
+          clipPath: UNCOVERED,
+          overwrite: true,
+          // Nothing clips these again, so the inline properties come back off
+          // and the element is left as the stylesheet wrote it.
+          onComplete: () => {
+            gsap.set(arrived, { clearProps: "clipPath,willChange" });
+            tweens.delete(tween);
+          },
+        });
+        tweens.add(tween);
+      };
+
       const observer = new IntersectionObserver((entries) => {
         const arrived: HTMLElement[] = [];
 
@@ -94,21 +128,17 @@ export function ImageReveal() {
         });
 
         if (arrived.length === 0) return;
-
-        gsap.to(arrived, {
-          ...WIPE,
-          clipPath: UNCOVERED,
-          overwrite: true,
-          // Nothing clips these again, so the inline properties come back off
-          // and the element is left as the stylesheet wrote it.
-          onComplete: () =>
-            gsap.set(arrived, { clearProps: "clipPath,willChange" }),
-        });
+        void revealWhenReady(arrived);
       }, WATCH);
 
       byFrame.forEach((_group, frame) => observer.observe(frame));
 
-      return () => observer.disconnect();
+      return () => {
+        disposed = true;
+        observer.disconnect();
+        tweens.forEach((tween) => tween.kill());
+        tweens.clear();
+      };
     });
 
     return () => mm.revert();
