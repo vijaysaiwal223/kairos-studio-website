@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { ProjectEditorial } from "@/components/project-editorial";
-import { ProjectShowcase } from "@/components/project-showcase";
-import { PROJECTS, getProject } from "@/lib/projects";
+import { ProjectEditorial } from "@/components/projects/project-editorial";
+import { ProjectShowcase } from "@/components/projects/project-showcase";
+import { PROJECTS, getProject } from "@/data/projects";
+import { SITE_NAME } from "@/lib/site";
 
 /**
  * A project's page.
@@ -11,7 +12,7 @@ import { PROJECTS, getProject } from "@/lib/projects";
  *
  * The design has drawn the project page twice and they are two different
  * pages, so there are two templates and the record says which one it is. Every
- * project in src/lib/projects.ts is prerendered at build time from whichever
+ * project in src/data/projects.ts is prerendered at build time from whichever
  * it names. dynamicParams stays off so a slug with no record 404s rather than
  * rendering an empty page.
  */
@@ -33,10 +34,10 @@ export async function generateMetadata({
   if (!project) return {};
 
   return {
-    title: `${project.title} | Kai.ros Studio`,
+    title: `${project.title} | ${SITE_NAME}`,
     description: project.summary,
     openGraph: {
-      title: `${project.title} | Kai.ros Studio`,
+      title: `${project.title} | ${SITE_NAME}`,
       description: project.summary,
       images: [{ url: project.hero.src }],
     },

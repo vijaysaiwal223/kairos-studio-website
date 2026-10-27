@@ -68,7 +68,7 @@
 
   /* Home page tokens (Figma: node 288:146) */
   --hairline: #e7e7e7;
-  --ink-ground: #151717;
+  --ink-ground: #1A1A1A;
   --ink-rule: #383a3a;
   --hero-subtext-dim: #dfdfdf;
   /* Footer tokens (Figma: node 179:1605) */
@@ -82,6 +82,12 @@
 
   /* Loading screen ink. */
   --heading-ink: #3b1b1b;
+  --script-gold: #ffb43e;
+  --about-ground: #111111;
+  --about-grid: rgba(255, 255, 255, 0.08);
+  --about-muted: rgba(255, 255, 255, 0.72);
+  --type-script: clamp(5rem, 7.7778vw, 7rem);
+  --type-script-lh: 0.82;
 }
 
 @theme inline {
@@ -122,9 +128,9 @@
   --color-spec-label: var(--spec-label);
 
   --color-heading-ink: var(--heading-ink);
+  --color-script-gold: var(--script-gold);
 
-  /* Beausite Fit Trial carries the whole site. */
-  --font-sans: var(--font-beausite);
+  --font-sans: var(--font-geist);
 }
 
 /* Both the loading screen and the project hero hold the page still by taking
@@ -139,6 +145,29 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+body:has(.hp-hero) {
+  --background: #1A1A1A;
+  --ink-ground: #1A1A1A;
+  background: #1A1A1A;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -219,31 +248,83 @@ body {
   color: #dfdfdf;
 }
 
-/* ─── Site menu reveal (Figma node 79:355) ────────────────────────────────
-   The panel is uncovered by a hard edge travelling from the top of the
-   viewport to the bottom, and retracts the same way on close. This is the
-   wipe language the featured projects section already uses: the edge moves,
-   the content behind it does not — no fade, no translation, no scale.
-
-   The 700ms below is mirrored by MENU_REVEAL_MS in site-nav.tsx, which keeps
-   the panel mounted for exactly as long as the retract takes. Change both. */
-.menu-panel {
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path 700ms cubic-bezier(0.76, 0, 0.24, 1);
+/* The full-width navigation drawn in Figma 220:1120, shared by the homepage
+   and the project pages. */
+.site-header-wide {
+  position: relative;
+  display: grid;
+  min-height: 60px;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 12px 12px 12px 24px;
+  border-radius: 16px;
+  background: rgb(255 255 255 / 8%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
 }
 
-.menu-panel[data-revealed="true"] {
-  clip-path: inset(0 0 0 0);
+.site-header-brand {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 16px;
+  color: #fff;
+  font-family: var(--font-geist), sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: -.04em;
+  white-space: nowrap;
 }
 
-/* The reveal is decorative: with reduced motion the panel simply appears.
-   The global prefers-reduced-motion block above already collapses the
-   duration, so this only stops the panel starting from a clipped state. */
-@media (prefers-reduced-motion: reduce) {
-  .menu-panel {
-    clip-path: inset(0 0 0 0);
-  }
+.site-header-brand img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
 }
+
+.site-header-links {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.site-header-links a,
+.site-header-contact,
+.site-header-mobile-links a {
+  font-family: var(--font-geist), sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.site-header-links a {
+  color: #fff;
+  transition: opacity 180ms ease;
+}
+
+.site-header-links a:hover { opacity: .65; }
+
+.site-header-contact {
+  justify-self: end;
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #fff;
+  color: #131313;
+  white-space: nowrap;
+  transition: background 180ms ease;
+}
+
+.site-header-contact:hover { background: #e8e8e8; }
+.site-header-toggle,
+.site-header-mobile-links { display: none; }
+.site-header-wide :is(a, button):focus-visible,
+.site-cta:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
 
 /* ─── Project showcase ────────────────────────────────────────────────────
    Figma: "PROJECT PAGE", node 139:865
@@ -298,8 +379,7 @@ body {
    hero reads full-bleed from the first pixel. */
 .ps-hero-nav {
   position: absolute;
-  inset-inline: 0;
-  top: 0;
+  inset: 28px 28px auto;
   z-index: 2;
 }
 
@@ -337,8 +417,9 @@ body {
 
 .ps-title {
   font-size: var(--type-display);
-  line-height: var(--type-display-lh);
-  font-weight: 500;
+  line-height: 1.04;
+  font-weight: 600;
+  letter-spacing: -0.05em;
 }
 
 .ps-summary {
@@ -618,73 +699,6 @@ body {
   .ps-closing {
     width: 100%;
   }
-
-  /* The stage gives up its fixed drawing: the chosen drawing goes full
-     width and the rail becomes a row of thumbnails beneath it. */
-  .ps-plan-stage {
-    display: flex;
-    aspect-ratio: auto;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .ps-plan-cell {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: auto;
-    height: auto;
-    flex: 1 1 120px;
-    aspect-ratio: 204 / 120;
-  }
-
-  .ps-plan-cell[aria-current="true"] {
-    width: 100%;
-    flex-basis: 100%;
-    order: -1;
-    aspect-ratio: 1131 / 636;
-  }
-
-  .ps-plan-nav {
-    position: relative;
-    left: auto;
-    top: auto;
-    width: 100%;
-    order: 1;
-    margin-top: 8px;
-  }
-
-  .ps-collage {
-    display: flex;
-    aspect-ratio: auto;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .ps-collage-item {
-    position: relative;
-    width: 100%;
-    height: auto;
-    aspect-ratio: var(--ps-ratio);
-  }
-
-  .ps-plans,
-  .ps-collage,
-  .ps-closing {
-    margin-top: 96px;
-  }
-
-  .ps-feature {
-    margin-top: 96px;
-  }
-
-  .ps-body {
-    padding-bottom: 96px;
-  }
-
-  .ps-page {
-    --ps-closing-gap: 96px;
-  }
 }
 
 /* ─── Editorial project page ──────────────────────────────────────────────
@@ -779,8 +793,7 @@ body {
    pixel — the same arrangement the showcase hero uses. */
 .pe-hero-nav {
   position: absolute;
-  inset-inline: 0;
-  top: 0;
+  inset: 28px 28px auto;
   z-index: 2;
 }
 
@@ -879,13 +892,13 @@ body {
   margin: 0;
 }
 
-/* The run, node 299:987. One 1360x7338 box with everything placed inside it,
-   the way the showcase's collage is — the composition scales as one drawing
-   rather than snapping between breakpoints. */
+/* The run, node 299:987. One 1360x4840 box (drawn 7338; see EDITORIAL_FRAME)
+   with everything placed inside it, the way the showcase's collage is — the
+   composition scales as one drawing rather than snapping between breakpoints. */
 .pe-run {
   position: relative;
   margin-inline: var(--site-gutter);
-  aspect-ratio: 1360 / 7338;
+  aspect-ratio: 1360 / 4840;
 }
 
 /* Geometry arrives as custom properties rather than as inline left/top/width/
@@ -937,62 +950,6 @@ body {
   line-height: var(--type-body-lh);
   letter-spacing: -0.32px;
   color: var(--editorial-copy);
-}
-
-/* The drawing stage sits on the run's frame like everything else, so it stays
-   where it was drawn rather than following the last photograph. */
-.pe-drawings-slot {
-  position: absolute;
-  left: var(--pe-x);
-  top: var(--pe-y);
-  width: var(--pe-w);
-  height: var(--pe-h);
-}
-
-.pe-drawings {
-  position: relative;
-  height: 100%;
-}
-
-/* Node 310:1397: 565 of the stage's 704. */
-.pe-drawing-main {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 80.2557%;
-  border: 1px solid var(--drawing-rule);
-}
-
-/* Nodes 310:1399-310:1403, hung below the main frame: three cells and two
-   16px gaps come to the drawn 672 of the stage's 1130. Unlike the showcase's
-   rail this one lists every drawing, including the one on show. */
-.pe-drawing-rail {
-  position: absolute;
-  left: 0;
-  top: 84.8011%;
-  display: flex;
-  width: 59.469%;
-  height: 15.1989%;
-  gap: 2.381%;
-}
-
-.pe-drawing-thumb {
-  position: relative;
-  flex: 1 1 0;
-  height: 100%;
-  border: 1px solid var(--drawing-rule);
-  cursor: pointer;
-}
-
-/* The design draws no selected state, because on its rail there is nothing to
-   select — see the note in project-drawings.tsx. With every drawing listed,
-   the one on show takes the page's ink for its frame. */
-.pe-drawing-thumb[aria-current="true"] {
-  border-color: var(--foreground);
-}
-
-.pe-drawing-thumb:focus-visible {
-  outline: 2px solid var(--foreground);
-  outline-offset: 3px;
 }
 
 /* Below the width the run can hold its composition.
@@ -1051,40 +1008,11 @@ body {
     aspect-ratio: var(--pe-ratio);
   }
 
-  .pe-copy,
-  .pe-drawings-slot {
+  .pe-copy {
     position: static;
     width: 100%;
     height: auto;
   }
-
-  /* The stage gives up its fixed drawing: the chosen drawing goes full width
-     and the rail becomes a row of thumbnails beneath it. */
-  .pe-drawings {
-    display: flex;
-    height: auto;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .pe-drawing-main {
-    position: relative;
-    height: auto;
-    aspect-ratio: 1130 / 565;
-  }
-
-  .pe-drawing-rail {
-    position: static;
-    width: 100%;
-    height: auto;
-    gap: 8px;
-  }
-
-  .pe-drawing-thumb {
-    height: auto;
-    aspect-ratio: 213 / 107;
-  }
-
 }
 
 /* HeroSequence does not scrub for a reader who has asked for less motion, so
@@ -1108,9 +1036,10 @@ body {
 /* Shared by every band: the small tracked-out label, the 40/48 heading and
    the grey body, in their light-ground and dark-ground forms. */
 .hp-eyebrow {
-  font-size: var(--type-body);
+  font-size: var(--type-fact);
   line-height: var(--type-body-lh);
-  letter-spacing: 1.92px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--editorial-copy);
 }
@@ -1121,9 +1050,9 @@ body {
 
 .hp-heading {
   font-size: var(--type-headline);
-  line-height: var(--type-headline-lh);
-  font-weight: 700;
-  letter-spacing: -0.8px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.04em;
   color: #000;
 }
 
@@ -1133,8 +1062,8 @@ body {
 
 .hp-body {
   font-size: var(--type-body);
-  line-height: var(--type-body-lh);
-  letter-spacing: -0.32px;
+  line-height: 1.55;
+  letter-spacing: 0;
   color: var(--editorial-copy);
 }
 
@@ -1142,245 +1071,228 @@ body {
   color: var(--hero-subtext-dim);
 }
 
-/* ── Masthead, node 390:1387 ─────────────────────────────────────────────
-   The 1440x1200 design is one full-bleed scene. Its height follows the frame's
-   6:5 proportion until 1200px, while a viewport minimum keeps the composition
-   useful on tall and narrow screens. */
+/* ── Homepage masthead, Figma 220:1050 ────────────────────────────────── */
 .hp-hero {
   position: relative;
   isolation: isolate;
   width: 100%;
-  height: min(83.3333vw, 1200px);
-  min-height: 100svh;
+  height: 100svh;
+  min-height: 680px;
   overflow: hidden;
-  background: #dbe4ef;
+  background: var(--ink-ground);
   color: #fff;
+  font-family: var(--font-geist), sans-serif;
 }
 
-.hp-hero-visual,
-.hp-hero-media,
-.hp-hero-fade,
-.hp-hero-clouds {
+.hp-hero-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--ink-ground);
+}
+
+.hp-hero-image,
+.hp-hero-scrim {
   position: absolute;
   inset: 0;
 }
 
-.hp-hero-visual {
-  z-index: -1;
-  overflow: hidden;
-}
-
-.hp-hero-media {
-  inset: -4% -2%;
-  transform-origin: 50% 100%;
-  will-change: transform;
-}
-
 .hp-hero-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  object-position: 50% 100%;
+  object-position: center;
 }
 
-/* The image fill in the Figma node carries this fade from 82.2% to white. */
-.hp-hero-fade {
+.hp-hero-scrim {
   z-index: 1;
-  background: linear-gradient(
-    to bottom,
-    transparent 81.8%,
-    rgba(255, 255, 255, 0.38) 91%,
-    #fff 100%
-  );
-}
-
-.hp-hero-clouds {
-  z-index: 2;
+  background:
+    linear-gradient(90deg, rgb(0 0 0 / 50%) 0%, rgb(0 0 0 / 36%) 34%, rgb(0 0 0 / 14%) 60%, transparent 78%),
+    linear-gradient(180deg, rgb(0 0 0 / 35%) 0%, rgb(0 0 0 / 22%) 34%, transparent 58%);
   pointer-events: none;
-}
-
-/* Every cloud is the same 1024x435 cutout, drawn 797x339 on the 1440 frame. */
-.hp-hero-cloud {
-  position: absolute;
-  top: 88%;
-  display: block;
-  width: 55.3472%;
-  aspect-ratio: 1024 / 435;
-  will-change: transform;
-}
-
-.hp-hero-cloud--one {
-  left: -12.0833%;
-}
-
-.hp-hero-cloud--two {
-  left: 33.5417%;
-}
-
-.hp-hero-cloud--three {
-  left: 63.4028%;
-}
-
-.hp-hero-cloud--three .hp-hero-cloud-image {
-  transform: rotate(180deg);
-}
-
-.hp-hero-cloud--four {
-  left: 4.5833%;
-}
-
-.hp-hero-cloud--five {
-  left: 65.9028%;
-}
-
-.hp-hero-cloud--six {
-  left: 42.5%;
-}
-
-.hp-hero-cloud-image {
-  object-fit: contain;
 }
 
 .hp-hero-nav {
   position: absolute;
-  inset: 0 0 auto;
+  inset: 28px 28px auto;
   z-index: 4;
 }
 
-/* Node 390:1396. 700 wide, centred, and 160px from the top of 1200. */
 .hp-hero-copy {
   position: absolute;
-  inset: 13.3333% 0 auto;
-  z-index: 3;
+  top: clamp(128px, 15.94svh, 146px);
+  left: 28px;
+  z-index: 2;
   display: flex;
-  width: 700px;
-  max-width: calc(100% - var(--site-gutter) * 2);
-  margin-inline: auto;
+  width: min(829px, calc(100% - 56px));
   flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  text-align: center;
-  will-change: transform, opacity;
+  align-items: flex-start;
+  text-align: left;
 }
 
-.hp-hero-label {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
+.hp-hero-eyebrow {
+  margin: 0 0 12px;
+  padding-left: 8px;
+  font-family: var(--font-geist), sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
 }
 
 .hp-hero-title {
-  font-size: var(--type-headline);
-  line-height: var(--type-headline-lh);
-  font-weight: 700;
-  letter-spacing: -0.8px;
+  max-width: 829px;
+  margin: 0;
+  font-size: clamp(48px, 4.54vw, 72px);
+  line-height: 1.11;
+  font-weight: 400;
+  letter-spacing: -.055em;
   color: #fff;
 }
+
+.hp-hero-title span { display: block; }
 
 .hp-hero-blurb {
-  width: 100%;
-  font-size: var(--type-body);
-  line-height: var(--type-body-lh);
-  letter-spacing: -0.32px;
+  max-width: 476px;
+  margin: 12px 0 0;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0;
   color: #fff;
 }
 
-/* ── The network, node 288:186 ───────────────────────────────────────────── */
-.hp-network {
-  display: flex;
-  flex-direction: column;
-  gap: 80px;
-  padding-block: 120px;
-  background: var(--background);
-}
-
-.hp-network-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 40px;
-  padding-inline: var(--site-gutter);
-}
-
-/* 443 of the 1360 column. */
-.hp-network-label {
-  display: flex;
-  width: 32.5735%;
-  flex-direction: column;
-  gap: 12px;
-}
-
-/* 557 of the 1360 column. */
-.hp-network-aside {
-  display: flex;
-  width: 40.9559%;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-/* Node 298:721. Hung from the top, which is what staggers the names. */
-.hp-architects {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding-inline: var(--site-gutter);
-}
-
-.hp-architect {
-  display: flex;
-  min-width: 0;
-  flex: 1 1 0;
-  flex-direction: column;
-  gap: 24px;
-}
-
-/* The drawn height, as a ratio of the drawn card width, so a portrait keeps
-   its proportion instead of its pixels as the row narrows. */
-.hp-architect-card {
+.site-cta {
   position: relative;
-  width: 100%;
-  aspect-ratio: 328 / var(--hp-card-h, 450);
+  display: inline-flex;
+  width: 158px;
+  height: 40px;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 4px 4px 4px;
   overflow: hidden;
-}
-
-.hp-architect-name {
-  font-size: var(--type-subhead);
-  line-height: var(--type-subhead-lh);
-  font-weight: 500;
-  letter-spacing: -0.4px;
+  border-radius: 8px;
+  background: #fff;
   color: #000;
+  font-family: var(--font-geist), sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 1.5253px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: width 300ms ease-out, padding 300ms ease-out;
 }
 
-/* Node 298:752, the 8px pair inside the card's 24px column. */
-.hp-architect-name-wrapper {
+.site-cta::before {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: 32px;
+  border-radius: 6px;
+  background: #131313;
+  content: "";
+  transition: width 300ms ease-out, inset 300ms ease-out;
+}
+
+.site-cta:is(:hover, :focus-visible) {
+  width: 148px;
+  padding: 2px 8px;
+}
+
+.site-cta:is(:hover, :focus-visible)::before {
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc(100% - 4px);
+}
+
+.site-cta-icon {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  place-items: center;
+  transition: width 300ms ease-out;
+}
+
+.site-cta-icon img { transform: rotate(90deg); }
+
+.site-cta-label {
+  position: relative;
+  z-index: 1;
+  transition: color 300ms ease-out;
+}
+
+.site-cta:is(:hover, :focus-visible) .site-cta-icon { width: 16px; }
+.site-cta:is(:hover, :focus-visible) .site-cta-label { color: #fff; }
+
+.site-cta--hero,
+.site-cta--hero:is(:hover, :focus-visible),
+.site-cta--invitation,
+.site-cta--invitation:is(:hover, :focus-visible) {
+  width: max-content;
+  padding-right: 16px;
+}
+
+.site-cta--hero { margin-top: 32px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .site-cta,
+  .site-cta::before,
+  .site-cta-icon,
+  .site-cta-label { transition-duration: 0.01ms; }
+}
+
+.hp-hero-facts {
+  position: absolute;
+  bottom: 28px;
+  left: 28px;
+  z-index: 2;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 48px;
+  margin: 0;
 }
 
-.hp-architect-role {
-  font-size: var(--type-fact);
-  line-height: var(--type-fact-lh);
-  letter-spacing: -0.28px;
-  color: #000;
+.hp-hero-facts > div { min-width: 166px; }
+
+.hp-hero-facts dt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 40px;
+  line-height: 40px;
+  letter-spacing: -.055em;
 }
 
-/* ── What we offer, node 295:481 ─────────────────────────────────────────
-   Opaque, and painting above the pinned project stage that precedes it — see
-   the note in featured-projects-section. */
+.hp-hero-facts dt span {
+  color: #bfbfbf;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -.01em;
+}
+
+.hp-hero-facts dd {
+  margin: 10px 0 0;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: -.01em;
+}
+
+/* ── What we do — scroll-driven perspective gallery ───────────────────── */
 .hp-offer {
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 120px;
+  gap: 96px;
   padding-block: 120px;
   background: var(--ink-ground);
 }
 
-/* Node 295:494. */
 .hp-offer-label {
   display: flex;
   width: 700px;
@@ -1391,325 +1303,193 @@ body {
   text-align: center;
 }
 
-.hp-offer-list {
-  width: 100%;
-}
 
-/* Node 295:508. The rules are drawn on every row's bottom edge and on the
-   first row's top, which is one rule between each pair and one above the set. */
-.hp-offer-row {
-  position: relative;
+/* ── Global network (Figma node 236:3858) ─────────────────────────────── */
+.hp-global-network {
+  box-sizing: border-box;
   display: flex;
-  align-items: center;
-  gap: 120px;
-  padding: 48px var(--site-gutter);
-  border-bottom: 1px solid var(--ink-rule);
-  isolation: isolate;
-}
-
-.hp-offer-row:first-child {
-  border-top: 1px solid var(--ink-rule);
-}
-
-/* The photograph the design draws behind row one. Held back until the row is
-   pointed at, because a picture on one row of six reads as a state, not as a
-   property of that row. Fades rather than cuts, and sits under everything. */
-.hp-offer-media {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 420ms ease-out;
-}
-
-.hp-offer-media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-}
-
-@media (hover: hover) {
-  .hp-offer-row:hover .hp-offer-media {
-    opacity: 1;
-  }
-}
-
-/* Node 297:684. */
-.hp-offer-count {
-  display: flex;
-  width: 32px;
-  height: 32px;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #fff;
-  border-radius: 99px;
-  background: #000;
-  font-size: var(--type-body);
-  line-height: var(--type-body-lh);
-  letter-spacing: -0.32px;
-  color: #fff;
-}
-
-/* Node 295:510, drawn at a flat 320px. */
-.hp-offer-body {
-  width: 320px;
-  flex: none;
-  font-size: var(--type-body);
-  line-height: var(--type-body-lh);
-  letter-spacing: -0.32px;
-  color: #fff;
-}
-
-/* Node 295:509. 56/64 on the 1440 frame, easing down rather than overflowing
-   on a narrower one — "Approvals & Compliance" is the long one to watch. */
-.hp-offer-title {
-  min-width: 0;
-  flex: 1 1 0;
-  font-size: clamp(2rem, 3.8889vw, 3.5rem);
-  line-height: 1.1429;
-  font-weight: 700;
-  letter-spacing: -1.12px;
-  color: #fff;
-}
-
-/* ── Global network ───────────────────────────────────────────────────── */
-.hp-global-network { display: flex; flex-direction: column; align-items: center; gap: 72px; padding: 120px var(--site-gutter); background: var(--ink-ground); border-top: 1px solid var(--ink-rule); }
-.hp-global-network-copy { display: flex; width: 700px; max-width: 100%; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
-.world-map { position: relative; width: 100%; aspect-ratio: 2 / 1; overflow: hidden; }
-.world-map-dots, .world-map-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.world-map-dots { background-position: center; background-repeat: no-repeat; background-size: cover; opacity: 0.75; mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent); }
-.world-map-svg { overflow: visible; }
-.world-map-location { cursor: crosshair; }
-.world-map-location > circle:first-child { pointer-events: all; }
-.world-map-pulse { transform-origin: center; transform-box: fill-box; animation: world-map-pulse 2.4s ease-out infinite; }
-.world-map-label { display: flex; height: 100%; align-items: center; color: #fff; font-family: var(--font-beausite), sans-serif; font-size: 11px; font-weight: 500; line-height: 1; letter-spacing: 0.04em; text-shadow: 0 1px 8px #101211; }
-.world-map-tooltip { position: absolute; inset: auto auto 16px 16px; margin: 0; color: rgba(255, 255, 255, 0.58); font-size: 12px; letter-spacing: 0.02em; }
-@keyframes world-map-pulse { 0% { transform: scale(1); opacity: 0.65; } 70%, 100% { transform: scale(4); opacity: 0; } }
-
-/* ── Different contexts, node 295:559 ────────────────────────────────────── */
-.hp-services {
-  display: flex;
+  min-height: 100dvh;
   flex-direction: column;
+  align-items: center;
   gap: 80px;
-  padding-block: 120px;
+  overflow: hidden;
+  padding: 80px 0;
   background: var(--ink-ground);
 }
 
-.hp-services-head {
+.hp-global-network-copy {
   display: flex;
+  width: min(850px, calc(100% - 40px));
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 40px;
-  padding-inline: var(--site-gutter);
-}
-
-.hp-services-label {
-  display: flex;
-  width: 32.5735%;
-  flex-direction: column;
   gap: 12px;
+  text-align: center;
 }
 
-.hp-services-aside {
-  display: flex;
-  width: 40.9559%;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.hp-service-cards {
-  display: flex;
-  align-items: stretch;
-  gap: 16px;
-  padding-inline: var(--site-gutter);
-}
-
-/* Node 295:589, drawn 500 tall across a third of the column. */
-.hp-service-card {
-  position: relative;
-  display: flex;
-  min-width: 0;
-  flex: 1 1 0;
-  flex-direction: column;
-  justify-content: flex-end;
-  aspect-ratio: 442 / 500;
-  padding: 32px;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.hp-service-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), #000);
-}
-
-.hp-service-copy {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.hp-global-network-label {
+  margin: 0;
   color: #fff;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 1.5253px;
+  text-transform: uppercase;
 }
 
-.hp-service-title {
-  font-size: var(--type-lead);
-  line-height: var(--type-lead-lh);
-  font-weight: 500;
-  letter-spacing: -0.48px;
+.hp-global-network-heading {
+  width: 100%;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(40px, 4.45vw, 64px);
+  line-height: 1.125;
+  font-weight: 400;
+  letter-spacing: -1.28px;
+  text-wrap: balance;
 }
 
-.hp-service-body {
-  font-size: var(--type-body);
-  line-height: var(--type-body-lh);
-  letter-spacing: -0.32px;
+.hp-global-network-body {
+  width: 100%;
+  margin: 0;
+  color: #fff;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
-/* Below the width the drawn rows and columns stop working. The two-column
-   bands stack, the four portraits become two, the three cards become one, and
-   the collage gives up its placed composition for a single column — each
-   picture keeping the ratio it was drawn at, passed down as --hp-ratio. */
+.hp-global-network-map {
+  display: flex;
+  width: min(1200px, 100%);
+  aspect-ratio: 1200 / 685.07;
+  flex: none;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.hp-global-network-map img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center top;
+}
+
+/* The introductory offer section stacks below this width. */
 @media (max-width: 1000px) {
-  .hp-network-head,
-  .hp-services-head {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 32px;
-  }
-
-  .hp-network-label,
-  .hp-network-aside,
-  .hp-services-label,
-  .hp-services-aside {
-    width: 100%;
-  }
-
-  .hp-architects {
-    flex-wrap: wrap;
-    gap: 32px 16px;
-  }
-
-  .hp-architect {
-    flex-basis: calc(50% - 8px);
-  }
-
-  .hp-network,
-  .hp-offer,
-  .hp-services {
+  .hp-offer {
     gap: 64px;
     padding-block: 96px;
   }
+}
 
-  .hp-global-network {
-    gap: 48px;
-    padding-block: 96px;
+@media (max-width: 900px) {
+  .site-header-wide {
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
   }
 
-  .hp-offer-row {
-    flex-wrap: wrap;
-    gap: 16px 24px;
-    padding-block: 32px;
+  .site-header-links { display: none; }
+
+  .site-header-toggle {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border-radius: 8px;
+    background: #fff;
+    color: #131313;
+    cursor: pointer;
   }
 
-  .hp-offer-title {
-    flex-basis: 100%;
-    order: -1;
+  .site-header-wide[data-open="true"] .site-header-mobile-links {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    left: 0;
+    display: grid;
+    gap: 0;
+    padding: 12px 24px;
+    border-radius: 16px;
+    background: rgb(25 25 25 / 94%);
+    box-shadow: 0 16px 36px rgb(0 0 0 / 24%);
   }
 
-  .hp-offer-body {
-    width: auto;
-    flex: 1 1 240px;
+  .site-header-mobile-links a {
+    padding: 14px 0;
+    border-bottom: 1px solid rgb(255 255 255 / 16%);
+    color: #fff;
   }
 
-  .hp-service-cards {
-    flex-direction: column;
-  }
-
-  /* flex: none matters. Stacked, the cards are in a column with no height of
-     its own, so the row's `flex: 1 1 0` would resolve their basis to zero and
-     the aspect-ratio would never get to set one. */
-  .hp-service-card {
-    flex: none;
-    aspect-ratio: 3 / 2;
-  }
+  .site-header-mobile-links a:last-child { border-bottom: 0; }
 }
 
 @media (max-width: 700px) {
-  .hp-hero {
-    height: 100svh;
-    min-height: 720px;
-    max-height: 900px;
+  .hp-hero { min-height: 760px; }
+
+  .hp-hero-nav,
+  .ps-hero-nav,
+  .pe-hero-nav { inset: 16px 16px auto; }
+
+  .site-header-wide { padding-left: 16px; }
+
+  .site-header-brand {
+    gap: 8px;
+    font-size: 17px;
   }
+
+  .site-header-contact { display: none; }
+
+  .hp-hero-image { object-position: 42% center; }
 
   .hp-hero-copy {
-    inset-block-start: 19%;
-    max-width: calc(100% - 48px);
+    top: 145px;
+    left: 20px;
+    width: calc(100% - 40px);
   }
 
+  .hp-hero-eyebrow { font-size: 11px; }
+
   .hp-hero-title {
-    font-size: clamp(2rem, 9vw, 2.5rem);
+    font-size: clamp(40px, 10vw, 56px);
     line-height: 1.08;
-    letter-spacing: -0.64px;
+    letter-spacing: -.052em;
   }
 
   .hp-hero-blurb {
-    max-width: 34rem;
+    max-width: 330px;
     font-size: 15px;
     line-height: 22px;
   }
 
-  .hp-hero-media {
-    inset: -3% -28%;
+  .site-cta--hero { margin-top: 24px; }
+
+  .hp-hero-facts {
+    bottom: 24px;
+    left: 20px;
+    gap: 26px;
   }
 
-  .hp-hero-image {
-    object-position: 50% 100%;
+  .hp-hero-facts > div { min-width: 0; }
+  .hp-hero-facts dt { font-size: 34px; line-height: 36px; }
+  .hp-hero-facts dd { font-size: 12px; line-height: 18px; }
+
+  .hp-global-network {
+    gap: 48px;
+    padding-block: 64px;
   }
 
-  .hp-hero-cloud {
-    top: 87%;
-    width: 104%;
+  .hp-global-network-copy {
+    width: calc(100% - 40px);
   }
 
-  .hp-hero-cloud--one {
-    left: -62%;
+  .hp-global-network-heading {
+    font-size: clamp(36px, 9vw, 48px);
   }
 
-  .hp-hero-cloud--two {
-    left: 2%;
+  .hp-global-network-map {
+    width: 100%;
+    max-width: 100%;
   }
-
-  .hp-hero-cloud--three {
-    left: 58%;
-  }
-
-  .hp-hero-cloud--four {
-    left: -24%;
-  }
-
-  .hp-hero-cloud--five {
-    left: 72%;
-  }
-
-  .hp-hero-cloud--six {
-    left: 30%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hp-hero-media,
-  .hp-hero-cloud,
-  .hp-hero-copy {
-    will-change: auto;
-  }
-
-  .world-map-pulse {
-    animation: none;
-  }
-
 }
 
 /* ─── The invitation ──────────────────────────────────────────────────────
@@ -1737,9 +1517,10 @@ body {
 }
 
 .invite-eyebrow {
-  font-size: var(--type-body);
+  font-size: var(--type-fact);
   line-height: var(--type-body-lh);
-  letter-spacing: 1.92px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--editorial-copy);
 }
@@ -1747,15 +1528,15 @@ body {
 .invite-heading {
   font-size: var(--type-headline);
   line-height: var(--type-headline-lh);
-  font-weight: 700;
-  letter-spacing: -0.8px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
   color: #000;
 }
 
 .invite-body {
   font-size: var(--type-body);
-  line-height: var(--type-body-lh);
-  letter-spacing: -0.32px;
+  line-height: 1.55;
+  letter-spacing: 0;
   color: var(--editorial-copy);
 }
 
@@ -1775,319 +1556,218 @@ body {
     padding-top: 96px;
   }
 
-  .invite-figure {
-    margin-top: 96px;
-    aspect-ratio: 3 / 2;
+.invite-figure {
+  margin-top: 96px;
+  aspect-ratio: 3 / 2;
   }
 }
 
-/* ─── Expanding gallery ───────────────────────────────────────────────────
-   Figma: nodes 297:705 (the collage) and 289:298 (the slide it becomes)
-
-   Two pinned screenfuls that read as one move: a collage that grows about its
-   own centre until the middle card has taken the whole viewport, and then the
-   same card cycling through the rest of the projects.
-
-   The geometry that matters is the symmetry. The hero is the middle child of a
-   row whose outer columns match each other and whose inner columns match each
-   other, so the row's centre and the hero's centre are the same point — which
-   is why scaling the row about 50% 50% grows the hero about the middle of the
-   screen and not off to one side. Break the symmetry and the hero drifts. */
-
-.expand-gallery {
-  position: relative;
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
-  background: var(--background);
-  isolation: isolate;
-}
-
-/* Wider than the screen before anything animates: 12 + 24 + 36 + 24 + 12 comes
-   to 108vw, so the outer columns start past both edges and the fan-out is
-   already there to be revealed rather than something that has to be staged. */
-.collage {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  transform-origin: 50% 50%;
-}
-
-.col {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.col--far-left,
-.col--far-right {
-  width: 12vw;
-}
-
-.col--left,
-.col--right {
-  width: 24vw;
-}
-
-.col__card {
-  position: relative;
-  width: 100%;
-  aspect-ratio: var(--card-ratio, 1);
-  overflow: hidden;
-}
-
-/* The centre card. 36vw at 4:5 puts the end scale near 2.8 on a 16:9 window —
-   but nothing here depends on that number; it is measured at runtime. */
-.hero {
-  position: relative;
-  flex: none;
-  width: 36vw;
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border-radius: 4px;
-}
-
-/* ── The preview, over the covered hero ─────────────────────────────────── */
-.preview {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  /* autoAlpha's resting state. Hidden rather than transparent, so none of it
-     is read out or hit-tested before the hero has arrived. */
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.preview__eyebrow,
-.preview__hint {
-  position: absolute;
-  top: 50%;
-  translate: 0 -50%;
-  font-size: var(--type-subhead);
-  line-height: 28px;
-  letter-spacing: -0.4px;
+/* ─── Home architect spotlight ────────────────────────────────────────────
+   Figma: Kairos Studio, node 236:3825. */
+.hp-architect-section {
+  padding-top: 80px;
+  background: var(--ink-ground);
   color: #fff;
-  white-space: nowrap;
 }
 
-.preview__eyebrow {
-  left: var(--site-gutter);
-}
-
-.preview__hint {
-  right: var(--site-gutter);
-}
-
-.preview__plus {
-  position: absolute;
-  top: var(--site-gutter);
-  right: var(--site-gutter);
-  display: grid;
-  width: 40px;
-  height: 40px;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 99px;
-  color: #fff;
-  font-size: var(--type-subhead);
-  line-height: 1;
-}
-
-/* Node 289:320, drawn 500 wide and centred on the frame.
-
-   Centred by the frame's grid, NOT by `translate: -50% -50%` on the card. GSAP
-   clears the independent translate/rotate/scale properties the moment it takes
-   an element's transforms over, and this card is tweened on y — so a card
-   centred that way loses its offset as soon as it animates and hangs off the
-   middle of the screen instead of sitting on it. Centring it from the parent
-   leaves the card's own transform free for GSAP to own outright. */
-.preview__card {
-  position: relative;
-  z-index: 1;
+.hp-architect-intro {
   display: flex;
-  width: 500px;
-  max-width: calc(100% - var(--site-gutter) * 2);
+  width: min(850px, calc(100% - 40px));
   flex-direction: column;
   align-items: center;
-  gap: 48px;
-  padding: 32px;
-  background: #fff;
-  color: #000;
+  gap: 12px;
+  margin: 0 auto 104px;
   text-align: center;
 }
 
-/* Every card is a link — it is the only way into a project from this section. */
-.preview__card.is-link {
-  pointer-events: auto;
-  transition:
-    transform 220ms ease-out,
-    box-shadow 220ms ease-out;
+.hp-architect-intro-label {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 1.5253px;
+  text-transform: uppercase;
 }
 
-@media (hover: hover) {
-  .preview__card.is-link:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
-  }
+.hp-architect-intro h2 {
+  width: 100%;
+  margin: 0;
+  font-size: clamp(40px, 4.45vw, 64px);
+  font-weight: 400;
+  line-height: 1.125;
+  letter-spacing: -1.28px;
+  text-wrap: balance;
 }
 
-.preview__card.is-link:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 4px;
+.hp-architect-intro-body {
+  width: 100%;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-wrap: pretty;
 }
 
-.preview__index {
-  font-size: var(--type-subhead);
-  line-height: 28px;
-  letter-spacing: -0.4px;
-  color: #4c4c4c;
-  white-space: nowrap;
+.hp-architect-spotlight {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  isolation: isolate;
 }
 
-.preview__title {
+.hp-architect-frame {
+  position: relative;
+  display: grid;
+  min-height: calc(100svh - 32px);
+  place-items: center;
+  overflow: hidden;
+  border-radius: 16px;
+  padding: 80px var(--site-gutter);
+  isolation: isolate;
+}
+
+.hp-architect-spotlight[data-animated] {
+  display: block;
+  height: 100svh;
+  padding: 0;
+}
+
+.hp-architect-spotlight[data-animated] .hp-architect-frame {
+  position: absolute;
+  inset: 16px;
+  min-height: 0;
+  overflow: visible;
+  isolation: auto;
+  padding-block: 24px;
+}
+
+.hp-architect-spotlight[data-animated] .hp-architect-spotlight-card {
+  width: min(500px, 100%, calc((100svh - 280px) * 1.04));
+  gap: 16px;
+  padding-top: 20px;
+}
+
+.hp-architect-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.hp-architect-spotlight-bg {
+  object-fit: cover;
+}
+
+.hp-architect-spotlight-card {
+  position: relative;
+  display: flex;
+  width: min(500px, 100%);
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #fff;
+  padding: 32px 16px 16px;
+  color: #000;
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.18);
+}
+
+.hp-architect-spotlight-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.hp-architect-spotlight-copy h3 {
   font-size: var(--type-lead);
   line-height: var(--type-lead-lh);
-  letter-spacing: -0.48px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
 }
 
-/* Node 289:329, drawn 300 tall across the card's 436 of content. */
-.preview__thumb {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 436 / 300;
-  overflow: hidden;
-}
-
-.preview__body {
+.hp-architect-spotlight-copy p {
+  max-width: 468px;
+  color: #464646;
   font-size: var(--type-body);
   line-height: var(--type-body-lh);
-  letter-spacing: -0.32px;
-  color: var(--editorial-copy);
+  letter-spacing: 0;
 }
 
-/* ── The cycle ──────────────────────────────────────────────────────────
-   The projects live inside .preview, on the one pinned frame, so there is no
-   second section here and no handover between two pins to be seen. */
-/* Clipped rather than faded: a project waits fully clipped, is revealed by the
-   line sweeping up, and is erased the same way. clip-path clips hit-testing
-   too, so a waiting project cannot catch a click meant for the one on show. */
-.cycle__frame {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  clip-path: inset(100% 0% 0% 0%);
+.hp-architect-awards {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
 }
 
-/* The one the preview opens on. It carries no background of its own: the hero
-   underneath it is already this project's photograph, covering the frame. */
-.cycle__frame[data-first] {
-  clip-path: inset(0% 0% 0% 0%);
+.hp-architect-awards li {
+  position: relative;
+  width: clamp(56px, 5.5556vw, 80px);
+  height: clamp(56px, 5.5556vw, 80px);
+  flex: none;
 }
 
-/* Bled 1% past the frame on each edge. The background is translated a whole
-   viewport during its wipe, and a sub-pixel rounding at either end of that
-   would otherwise show as a hairline of the frame behind it. */
-.cycle__bg {
-  position: absolute;
-  inset: -1%;
+.hp-architect-awards img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-/* Node 289:312's second fill. */
-.cycle__scrim {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.2);
+.hp-architect-portrait {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 468 / 450;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #ececec;
 }
 
-/* Below the width the five columns stop being readable: the outer pair goes
-   and the hero takes more of the screen, over a shorter scroll. */
-@media (max-width: 1024px) {
-  .col--far-left,
-  .col--far-right {
-    display: none;
-  }
-
-  .col--left,
-  .col--right {
-    width: 26vw;
-  }
-
-  .hero {
-    width: 62vw;
-  }
+.hp-architect-frame:last-child .hp-architect-portrait img {
+  object-position: center 88%;
 }
 
-/* And below this there is no collage at all — the hero starts full-bleed, so
-   the measured end scale comes out at 1 and the expansion is skipped without
-   anything having to special-case it. */
 @media (max-width: 640px) {
-  .col {
-    display: none;
+  .hp-architect-section { padding-top: 64px; }
+  .hp-architect-intro { margin-bottom: 72px; }
+  .hp-architect-intro h2 { font-size: clamp(36px, 9vw, 48px); }
+
+  .hp-architect-frame {
+    min-height: 760px;
+    padding: 64px 24px;
   }
 
-  .collage {
-    display: block;
+  .hp-architect-spotlight-card {
+    border-radius: 20px;
   }
 
-  .hero {
-    position: absolute;
-    inset: 0;
-    width: auto;
-    aspect-ratio: auto;
-    border-radius: 0;
+  .hp-architect-awards {
+    gap: 4px;
   }
-
-  .preview__card {
-    gap: 24px;
-  }
-
 }
 
-/* No pin and no scrub for a reader who has asked for less motion — the section
-   is simply the state the move would have arrived at. ExpandingGallery builds
-   no timeline at all under this, so nothing here is being overridden. */
-@media (prefers-reduced-motion: reduce) {
-  .collage {
-    display: block;
+@media (max-height: 700px) and (prefers-reduced-motion: no-preference) {
+  .hp-architect-spotlight[data-animated] .hp-architect-spotlight-card {
+    width: min(420px, 100%);
+    gap: 8px;
+    padding: 12px;
   }
-
-  .col {
-    display: none;
-  }
-
-  .hero {
-    position: absolute;
-    inset: 0;
-    width: auto;
+  .hp-architect-spotlight[data-animated] .hp-architect-portrait {
+    height: max(90px, calc(100svh - 280px));
     aspect-ratio: auto;
-    border-radius: 0;
   }
-
-  .preview {
-    opacity: 1;
-    visibility: visible;
+  .hp-architect-spotlight[data-animated] .hp-architect-awards li {
+    width: 40px;
+    height: 40px;
   }
-
-  /* Every project becomes its own screenful, in flow. */
-  .preview {
-    position: static;
-  }
-
-  .cycle__frame {
-    position: relative;
-    height: 100vh;
-    clip-path: none;
-  }
-
-  .expand-gallery {
-    height: auto;
+  .hp-architect-spotlight[data-animated] .hp-architect-portrait img {
+    object-fit: contain;
+    object-position: center;
   }
 }
 
@@ -2331,146 +2011,300 @@ html.lenis body {
   inset: 0;
   z-index: 100;
   overflow: hidden;
-  /* The boards are pure white, a shade off the page ground behind them. */
-  background: #fff;
-  color: var(--heading-ink);
+  background: var(--ink-ground);
+  color: #fff;
 }
 
-/* Full-bleed from the start; the component scales it down to the drawn
-   650x400 and opens it again at 100%. Sizing it this way means the plate and
-   the hero it turns into are the same box. */
-.loader-plate {
+.loader-mark {
   position: absolute;
-  inset: 0;
-  transform-origin: 50% 50%;
-  will-change: transform;
-  /* The reel's frames wait outside the plate and leave through the bottom of
-     it, so the plate is the window they are seen through. */
-  overflow: hidden;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
 }
 
-/* One still in the shuffle. Parked above the plate in CSS rather than by the
-   timeline, so a frame cannot be caught on screen between the first paint and
-   the first tick. Nothing behind it is hidden: an image that has not arrived
-   yet draws nothing and the hero underneath simply stays put for that beat. */
-.loader-frame {
-  position: absolute;
-  inset: 0;
-  transform: translateY(-100%);
-  will-change: transform;
-}
-
-.loader-frame img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Both halves of the wordmark on one line, centred, 12px apart as drawn
-   (node 197:1724 ends at 720, 197:1726 starts at 732). Sits at y 422 of 900. */
-.loader-wordmark {
-  position: absolute;
-  /* The boards set these two in caps (textCase UPPER on nodes 197:1724 and
-     197:1726), which is why "KAI.ROS" measures 91px there and not the 75px
-     the mixed-case string would. The nav wordmark below is not in caps, so
-     this is the screen's own treatment rather than the brand's. */
-  text-transform: uppercase;
-  top: 46.8889%;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  font-size: var(--type-lead);
-  line-height: var(--type-lead-lh);
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.loader-wordmark span {
-  display: block;
-  will-change: transform;
-}
-
-/* Node 197:1737: 48/56, centred, its baseline 40px off the bottom. */
 .loader-count {
   position: absolute;
-  text-transform: uppercase;
-  right: 0;
-  bottom: 40px;
-  left: 0;
-  text-align: center;
-  /* The one size on the site not on the scale: the boards draw the count at
-     48/56, tighter than the 48/64 the nav menu uses, because it is a numeral
-     in a fixed composition rather than type in a column. */
-  font-size: 48px;
-  line-height: 56px;
-  font-weight: 600;
+  right: 4.1667%;
+  bottom: 56px;
+  margin: 0;
+  font-size: 80px;
+  line-height: 1.1;
+  font-weight: 400;
+  letter-spacing: 0;
   font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
-/* Node 197:1739. Drawn as a rule along the very bottom of the frame that
-   fills as the count climbs; scaled rather than resized so it composites. */
 .loader-bar {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
   height: 8px;
+  border-radius: 24px;
   transform: scaleX(0);
   transform-origin: 0 50%;
   background: currentColor;
-  will-change: transform;
 }
 
-@media (max-width: 900px) {
-  .loader-count {
-    font-size: 32px;
-    line-height: 40px;
+@media (max-width: 600px) {
+  .loader-count { right: 24px; bottom: 40px; font-size: 56px; }
+  .loader-bar { bottom: max(8px, env(safe-area-inset-bottom)); height: 6px; }
+}
+
+/* ─── Dark theme retrofit ────────────────────────────────────────────────
+   Preserve every layout, component and motion path. This layer only remaps
+   light page surfaces and text tokens into the site's existing dark language. */
+:root {
+  --background: #1A1A1A;
+  --foreground: #f4f1eb;
+  --canvas: #101111;
+  --canvas-warm: #121211;
+  --spec-label: #a9a39a;
+  --spec-rule: #2f302f;
+  --thumb-rule: #343633;
+  --thumb-hover: #77736b;
+  --hairline: #282a28;
+  --editorial-copy: #b9b3aa;
+  --drawing-rule: #4d4f4b;
+  --hero-subtext-dim: #c9c4bb;
+  --footer-ink: #090a09;
+  --footer-text: #e7e2d8;
+  --footer-rule: #2f312f;
+  --footer-muted: #938d84;
+  --footer-wordmark: #242621;
+  --heading-ink: #f4f1eb;
+  --about-ground: var(--background);
+  --about-grid: rgba(244, 241, 235, 0.075);
+}
+
+.ps-page,
+.pe-page,
+.invite {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.hp-heading,
+.invite-heading,
+.ps-spec-value,
+.ps-overview-heading,
+.ps-overview-body,
+.pe-facts-list,
+.pe-copy-heading {
+  color: var(--foreground);
+}
+
+.hp-eyebrow,
+.hp-body,
+.invite-eyebrow,
+.invite-body,
+.pe-copy-body {
+  color: var(--editorial-copy);
+}
+
+.ps-plan-cell {
+  background: #171817;
+  color: var(--foreground);
+  border-color: var(--thumb-rule);
+}
+
+.ps-plan-nav button {
+  color: var(--foreground);
+}
+
+/* Figma 250:6260 — three services orbiting a centered title. */
+.pin-spacer:has(> .hp-services) {
+  z-index: 3 !important; /* ScrollTrigger sets an inline stacking level. */
+}
+
+.hp-services {
+  position: relative;
+  z-index: 1;
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  background: var(--ink-ground);
+}
+
+.hp-services-stage {
+  position: relative;
+  width: min(1280px, 100%);
+  height: max(100svh, 660px);
+  margin-inline: auto;
+}
+
+.hp-services-heading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: flex;
+  width: 440px;
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.hp-services-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 8%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 1.68px;
+  text-transform: uppercase;
+}
+
+.hp-services-eyebrow span {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  background: #fff;
+}
+
+.hp-services-heading h2 {
+  width: 100%;
+  color: #fff;
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1.13;
+  letter-spacing: -3.52px;
+}
+
+.hp-service-cards {
+  display: block;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.hp-service-card {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: 344px;
+  min-width: 0;
+  height: auto;
+  flex: none;
+  padding: 12px;
+  overflow: hidden;
+  border-radius: 16px;
+  aspect-ratio: auto;
+  background: rgb(255 255 255 / 8%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+  backdrop-filter: blur(10px);
+  color: #fff;
+}
+
+.hp-service-card--1 { top: 40%; left: 28px; }
+.hp-service-card--2 { top: 50%; right: 28px; }
+/* Hung a fixed distance under the heading rather than at a share of the
+   stage, so it clears the title on short screens instead of dropping off the
+   foot of the section. */
+.hp-service-card--3 { top: calc(50% + 112px); left: 50%; margin-left: -172px; }
+
+.hp-service-card article {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* The image gives up height on short screens so the centre card, which sits
+   below the title, still ends inside the pinned stage: the card is its image
+   plus ~108px, and has to fit in the half-screen under the heading. */
+.hp-service-image {
+  position: relative;
+  height: clamp(140px, calc(50svh - 240px), 280px);
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.hp-service-image img {
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.hp-service-card:hover .hp-service-image img { transform: scale(1.035); }
+
+.hp-service-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 8px;
+  color: #fff;
+}
+
+.hp-service-copy h3 {
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: -1.1px;
+}
+
+.hp-service-copy p {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -.14px;
+}
+
+@media (max-width: 1100px) {
+  .hp-services { padding-block: 72px; }
+
+  .hp-services-stage {
+    height: auto;
+    padding-inline: 24px;
   }
+
+  .hp-services-heading {
+    position: static;
+    width: min(440px, 100%);
+    margin: 0 auto 72px;
+    transform: none;
+  }
+
+  .hp-service-cards {
+    display: grid;
+    max-width: 720px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin-inline: auto;
+  }
+
+  .hp-service-card {
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    width: 100%;
+    margin: 0;
+  }
+
+  .hp-service-card--3 { grid-column: 1 / -1; width: min(344px, 100%); justify-self: center; }
+  .hp-service-image { height: 280px; }
 }
 
-/* ─── Arrow CTA sizing ────────────────────────────────────────────────────
-   ArrowFillButton sizes itself in vw, which made it 60px tall with a 16.6px
-   label that grew and shrank with the window — half again the height the
-   design draws a button at, and the one piece of type on the site that was
-   not on the scale.
-
-   Sized here rather than in the component so the vendored file stays as it
-   shipped. These win on the cascade without !important: Tailwind's utilities
-   are generated into layers, and unlayered rules beat layered ones whatever
-   the specificity.
-
-   The circle and its inset are read from the two custom properties the
-   component already exposes, so the fill, the clip-path and the circle all
-   follow from the same numbers. */
-
-.cta {
-  --icon-circle: 36px;
-  --icon-right: 6px;
-  height: 48px;
-  /* Label padding left; on the right it has to clear the circle as well. */
-  padding-left: 24px;
-  padding-right: calc(var(--icon-circle) + var(--icon-right) + 16px);
-  font-size: var(--type-body);
-  line-height: var(--type-body-lh);
+@media (max-width: 650px) {
+  .hp-services { padding-block: 56px; }
+  .hp-services-heading { margin-bottom: 48px; }
+  .hp-services-heading h2 { font-size: clamp(40px, 10vw, 56px); line-height: 1.1; letter-spacing: -.055em; }
+  .hp-service-cards { max-width: 400px; grid-template-columns: 1fr; gap: 20px; }
+  .hp-service-card--3 { grid-column: auto; width: 100%; }
+  .hp-service-image { height: clamp(220px, 70vw, 280px); }
 }
 
-/* The fill layer carries a second copy of the label and has to sit exactly
-   under the first, so it takes the same padding.
-   
-   :not(:empty) matters. The component has two sibling divs: this one, which
-   holds the label, and an empty one that paints the circle and grows into the
-   fill. Padding both pushes the empty one out to the width of its own padding
-   — it is inset-sized at 36px, and 24 + 58 of padding forces it to 82 — which
-   reads as the circle having gone square at the top and bottom. */
-.cta > div:not(:empty) {
-  padding-left: 24px;
-  padding-right: calc(var(--icon-circle) + var(--icon-right) + 16px);
-}
-
-.cta svg {
-  width: 18px;
-  height: 18px;
+@media (prefers-reduced-motion: reduce) {
+  .hp-service-image img { transition: none; }
 }
