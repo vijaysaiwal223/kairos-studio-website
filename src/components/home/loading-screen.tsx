@@ -1,11 +1,21 @@
 "use client";
 
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRef, useState } from "react";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { preloadPage } from "@/lib/preload-page";
 import { getSmoothScroll, startSmoothScroll, stopSmoothScroll } from "@/lib/smooth-scroll";
 
 const SEEN_KEY = "kairos:loader-seen";
+/** Long enough for the mark to read, even when everything is cached. */
+const MIN_DURATION = 1200;
+
+/**
+ * Covers the homepage until every font, image and video on it has loaded and
+ * the scroll animations have been measured against the finished layout.
+ * Shown once per session; later visits have it all in cache.
+ */
 
 export function LoadingScreen() {
   const [isFinished, setIsFinished] = useState(false);
@@ -18,6 +28,7 @@ export function LoadingScreen() {
     const count = countRef.current;
     const bar = barRef.current;
     if (!root || !count || !bar) return;
+    gsap.registerPlugin(ScrollTrigger);
     let seen = false;
     try {
       seen = process.env.NODE_ENV !== "development" && sessionStorage.getItem(SEEN_KEY) === "1";
@@ -42,44 +53,58 @@ export function LoadingScreen() {
       try { sessionStorage.setItem(SEEN_KEY, "1"); } catch { /* Replay if storage is unavailable. */ }
       setIsFinished(true);
     };
-    const media = gsap.matchMedia(root);
-    media.add("(prefers-reduced-motion: reduce)", finish);
-    media.add("(prefers-reduced-motion: no-preference)", () => {
-      const video = document.querySelector<HTMLVideoElement>(".hp-hero-video");
-      const progress = { value: 0 };
-      let ready = !video || video.readyState >= 2;
-      let settled = false;
-      let closing = false;
-      let exit: gsap.core.Timeline | undefined;
-      const paint = () => {
-        count.textContent = Math.round(progress.value) + "%";
-        gsap.set(bar, { scaleX: progress.value / 100 });
-      };
-      const closeIfReady = () => {
-        if (!ready || !settled || closing) return;
-        closing = true;
-        exit = gsap.timeline({ onComplete: finish })
-          .to(progress, { value: 100, duration: 0.45, ease: "power1.out", onUpdate: paint })
-          .to(root, { opacity: 0, duration: 0.5, ease: "power2.inOut" }, "+=0.15");
-      };
-      const onReady = () => { ready = true; closeIfReady(); };
-      video?.addEventListener("loadeddata", onReady);
-      video?.addEventListener("error", onReady);
-      // The count approaches readiness; completion waits for a drawable video frame.
-      const run = gsap.to(progress, {
-        value: 90, duration: 1.9, ease: "none", onUpdate: paint,
-        onComplete: () => { settled = true; closeIfReady(); },
-      });
-      const safety = gsap.delayedCall(6, onReady);
-      return () => {
-        run.kill();
-        safety.kill();
-        exit?.kill();
-        video?.removeEventListener("loadeddata", onReady);
-        video?.removeEventListener("error", onReady);
-      };
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const progress = { value: 0 };
+    const paint = () => {
+      count.textContent = Math.round(progress.value) + "%";
+      gsap.set(bar, { scaleX: progress.value / 100 });
+    };
+    // The count follows real progress, held short of 100 until the page has
+    // also been measured for its scroll animations.
+    const onProgress = (share: number) => {
+      const value = share * 95;
+      if (reduced) {
+        progress.value = value;
+        paint();
+        return;
+      }
+      gsap.to(progress, { value, duration: 0.6, ease: "power2.out", overwrite: true, onUpdate: paint });
+    };
+    // The footage played unseen behind the loader; start it over as it shows.
+    const restartHero = () => {
+      const hero = document.querySelector<HTMLVideoElement>(".hp-hero-video");
+      if (!hero) return;
+      hero.currentTime = 0;
+      hero.play().catch(() => { /* Autoplay may be blocked; the poster stays. */ });
+    };
+
+    let cancelled = false;
+    let exit: gsap.core.Timeline | undefined;
+    Promise.all([
+      preloadPage({ exclude: root, onProgress }),
+      new Promise((resolve) => window.setTimeout(resolve, reduced ? 0 : MIN_DURATION)),
+    ]).then(() => {
+      if (cancelled) return;
+      // Pins and scrubs were measured while images were still arriving.
+      ScrollTrigger.refresh();
+      if (reduced) {
+        restartHero();
+        finish();
+        return;
+      }
+      exit = gsap.timeline({ onComplete: finish })
+        .to(progress, { value: 100, duration: 0.45, ease: "power1.out", overwrite: true, onUpdate: paint })
+        .call(restartHero, undefined, "+=0.15")
+        .to(root, { opacity: 0, duration: 0.5, ease: "power2.inOut" });
     });
-    return () => { media.revert(); release(); };
+
+    return () => {
+      cancelled = true;
+      exit?.kill();
+      gsap.killTweensOf(progress);
+      release();
+    };
   }, []);
 
   if (isFinished) return null;
