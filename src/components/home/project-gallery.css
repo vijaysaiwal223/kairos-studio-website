@@ -18,17 +18,6 @@
   align-items: start;
 }
 
-.project-gallery-eyebrow {
-  margin: 0;
-  color: rgb(255 255 255 / 50%);
-  font-family: var(--font-geist), sans-serif;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 17px;
-  letter-spacing: 0.133em;
-  text-transform: uppercase;
-}
-
 .project-gallery-title {
   display: flex;
   flex-direction: column;

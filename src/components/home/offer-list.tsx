@@ -6,6 +6,7 @@ import { useRef } from "react";
 
 import { OFFERINGS } from "@/data/home";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { Eyebrow } from "../ui/eyebrow";
 
 import "./offer-journey.css";
 
@@ -93,7 +94,7 @@ export function OfferList() {
       <div ref={journeyRef} className="offer-journey">
         <div className="offer-journey-stage">
           <div className="hp-offer-label">
-            <p className="hp-eyebrow hp-eyebrow-light">What we do</p>
+            <Eyebrow>What we do</Eyebrow>
             <h2 className="hp-heading hp-heading-light" id="hp-offer-heading">The right team. Thoughtfully led.</h2>
             <p className="hp-body hp-body-light">
               We listen to what you want to build, bring together the expertise it

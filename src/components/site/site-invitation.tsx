@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import ScrollReveal from "@/components/ui/scroll-reveal";
+import { Eyebrow } from "@/components/ui/eyebrow";
 import { SiteCta } from "@/components/ui/site-cta";
 
 import { TextReveal } from "../motion/text-reveal";
@@ -25,7 +26,7 @@ export function SiteInvitation({
   return (
     <section id="contact" className="invite">
       <TextReveal className="invite-copy">
-        <p className="invite-eyebrow">Start a conversation</p>
+        <Eyebrow>Start a conversation</Eyebrow>
         <ScrollReveal
           rotationEnd="top 52%"
           wordAnimationEnd="center 52%"

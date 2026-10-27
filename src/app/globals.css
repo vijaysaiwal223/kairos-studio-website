@@ -1035,18 +1035,6 @@ body:has(.hp-hero) {
 
 /* Shared by every band: the small tracked-out label, the 40/48 heading and
    the grey body, in their light-ground and dark-ground forms. */
-.hp-eyebrow {
-  font-size: var(--type-fact);
-  line-height: var(--type-body-lh);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--editorial-copy);
-}
-
-.hp-eyebrow-light {
-  color: #fff;
-}
 
 .hp-heading {
   font-size: var(--type-headline);
@@ -1303,7 +1291,6 @@ body:has(.hp-hero) {
   text-align: center;
 }
 
-
 /* ── Global network (Figma node 236:3858) ─────────────────────────────── */
 .hp-global-network {
   box-sizing: border-box;
@@ -1324,16 +1311,6 @@ body:has(.hp-hero) {
   align-items: center;
   gap: 12px;
   text-align: center;
-}
-
-.hp-global-network-label {
-  margin: 0;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  letter-spacing: 1.5253px;
-  text-transform: uppercase;
 }
 
 .hp-global-network-heading {
@@ -1516,15 +1493,6 @@ body:has(.hp-hero) {
   text-align: center;
 }
 
-.invite-eyebrow {
-  font-size: var(--type-fact);
-  line-height: var(--type-body-lh);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--editorial-copy);
-}
-
 .invite-heading {
   font-size: var(--type-headline);
   line-height: var(--type-headline-lh);
@@ -1578,15 +1546,6 @@ body:has(.hp-hero) {
   gap: 12px;
   margin: 0 auto 104px;
   text-align: center;
-}
-
-.hp-architect-intro-label {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  letter-spacing: 1.5253px;
-  text-transform: uppercase;
 }
 
 .hp-architect-intro h2 {
@@ -2098,9 +2057,7 @@ html.lenis body {
   color: var(--foreground);
 }
 
-.hp-eyebrow,
 .hp-body,
-.invite-eyebrow,
 .invite-body,
 .pe-copy-body {
   color: var(--editorial-copy);
@@ -2151,8 +2108,13 @@ html.lenis body {
   text-align: center;
 }
 
-.hp-services-eyebrow {
+/* The section label (Figma 250:6260), shared by every homepage section and
+   the invitation through the Eyebrow component. fit-content keeps it a chip
+   inside the stretching flex columns most sections set their copy in. */
+.eyebrow {
   display: inline-flex;
+  width: fit-content;
+  margin: 0;
   align-items: center;
   gap: 12px;
   padding: 8px;
@@ -2168,7 +2130,7 @@ html.lenis body {
   text-transform: uppercase;
 }
 
-.hp-services-eyebrow span {
+.eyebrow span {
   width: 8px;
   height: 8px;
   flex: none;

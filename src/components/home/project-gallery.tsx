@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRef } from "react";
 
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { Eyebrow } from "../ui/eyebrow";
 
 import "./project-gallery.css";
 
@@ -80,7 +81,7 @@ export function ProjectGallery() {
       <div className="project-gallery-inner">
         <div className="project-gallery-header">
           <div>
-            <p className="project-gallery-eyebrow">Selected projects</p>
+            <Eyebrow>Selected projects</Eyebrow>
             <h2 className="project-gallery-title" id="project-gallery-title">
               <span>Architecture,</span>
               <span>up close.</span>

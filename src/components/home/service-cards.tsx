@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRef } from "react";
 
 import { SERVICES } from "@/data/home";
+import { Eyebrow } from "../ui/eyebrow";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 
 /** Figma 250:6260 — a staggered constellation of the studio's three services. */
@@ -75,10 +76,7 @@ export function ServiceCards() {
     >
       <div className="hp-services-stage">
         <header className="hp-services-heading">
-          <p className="hp-services-eyebrow">
-            <span aria-hidden="true" />
-            Our expertise
-          </p>
+          <Eyebrow>Our expertise</Eyebrow>
           <h2 id="hp-services-title">Expertise for every stage</h2>
         </header>
 

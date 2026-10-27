@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import { useRef } from "react";
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
+import { Eyebrow } from "../ui/eyebrow";
 
 const AWARDS = [
   {
@@ -106,7 +107,7 @@ export function HomeArchitectSpotlight() {
   return (
     <section id="projects" className="hp-architect-section" aria-labelledby="hp-architect-heading">
       <div className="hp-architect-intro">
-        <p className="hp-architect-intro-label">Our architect network</p>
+        <Eyebrow>Our architect network</Eyebrow>
         <h2 id="hp-architect-heading">International expertise, chosen for you.</h2>
         <p className="hp-architect-intro-body">
           Every project deserves the right point of view. We connect your brief

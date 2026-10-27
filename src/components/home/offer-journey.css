@@ -17,13 +17,8 @@
   font-family: var(--font-geist), sans-serif;
 }
 
-.hp-offer-label .hp-eyebrow {
-  margin: 0 0 12px;
-  color: #a9a9a7;
-  font-family: var(--font-geist), sans-serif;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 400;
+.hp-offer-label .eyebrow {
+  margin-bottom: 12px;
 }
 
 .hp-offer-label .hp-heading {
@@ -148,10 +143,6 @@
     top: clamp(68px, 10svh, 100px);
     left: 50%;
     width: calc(100% - 40px);
-  }
-
-  .hp-offer-label .hp-eyebrow {
-    font-size: 11px;
   }
 
   .hp-offer-label .hp-heading {

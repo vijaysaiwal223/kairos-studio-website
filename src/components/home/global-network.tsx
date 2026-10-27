@@ -1,12 +1,13 @@
 import Image from "next/image";
 
 import { TextReveal } from "../motion/text-reveal";
+import { Eyebrow } from "../ui/eyebrow";
 
 export function GlobalNetwork() {
   return (
     <section className="hp-global-network" aria-labelledby="global-network-heading">
       <TextReveal className="hp-global-network-copy">
-        <p className="hp-global-network-label">Connected by design</p>
+        <Eyebrow>Connected by design</Eyebrow>
         <h2 id="global-network-heading" className="hp-global-network-heading">
           Global perspective. A project that feels yours.
         </h2>
