@@ -1,11 +1,16 @@
-import { GlobalNetwork } from "@/components/home/global-network";
+import { Founder } from "@/components/home/founder";
 import { HomeArchitectSpotlight } from "@/components/home/home-architect-spotlight";
+import { HomeConversation } from "@/components/home/home-conversation";
 import { HomeHero } from "@/components/home/home-hero";
+import { HowWeWork } from "@/components/home/how-we-work";
+import { KairosStory } from "@/components/home/kairos-story";
 import { LoadingScreen } from "@/components/home/loading-screen";
 import { OfferList } from "@/components/home/offer-list";
 import { ProjectGallery } from "@/components/home/project-gallery";
 import { ServiceCards } from "@/components/home/service-cards";
-import { SiteInvitation } from "@/components/site/site-invitation";
+import { StandsFor } from "@/components/home/stands-for";
+import { WhyKairos } from "@/components/home/why-kairos";
+import { SectionDivider } from "@/components/ui/section-divider";
 
 export default function Home() {
   return (
@@ -13,15 +18,29 @@ export default function Home() {
       <LoadingScreen />
 
       <HomeHero />
+      <SectionDivider />
+      <StandsFor />
+      <SectionDivider />
+      <Founder />
+      <SectionDivider />
+      <KairosStory />
+      <SectionDivider />
 
       <OfferList />
-      <HomeArchitectSpotlight />
-      <ProjectGallery />
-
-      <GlobalNetwork />
+      <SectionDivider />
       <ServiceCards />
-      <SiteInvitation showCta={false} />
+      <SectionDivider />
+      <HowWeWork />
+      <SectionDivider />
+      <ProjectGallery />
+      <SectionDivider />
+      <HomeArchitectSpotlight />
+      <SectionDivider />
+      <WhyKairos />
+      <SectionDivider />
 
+      <HomeConversation />
+      <SectionDivider />
     </>
   );
 }

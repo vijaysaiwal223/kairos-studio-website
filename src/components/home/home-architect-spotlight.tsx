@@ -1,158 +1,29 @@
-"use client";
+import { Eyebrow } from "@/components/ui/eyebrow";
+import { ArchitectGlobeStage } from "@/components/home/architect-globe-stage";
+import { GuideRailBlinks, GuideRuleBlink } from "@/components/ui/guide-blinks";
+import { SplitText } from "@/components/ui/split-text";
 
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Image from "next/image";
-import { useRef } from "react";
-import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
-import { Eyebrow } from "../ui/eyebrow";
-
-const AWARDS = [
-  {
-    src: "/home/architect-spotlight/logo-lbc.png",
-    alt: "LBC award mark",
-  },
-  {
-    src: "/home/architect-spotlight/logo-awards.png",
-    alt: "Awards mark",
-  },
-  {
-    src: "/home/architect-spotlight/logo-india-architecture.png",
-    alt: "India Architecture mark",
-  },
-  {
-    src: "/home/architect-spotlight/logo-government.png",
-    alt: "Government recognition mark",
-  },
-];
-
-const ARCHITECT_SLIDES = [
-  {
-    name: "ZZ Architects",
-    body: "A long-standing firm founded in 1957 focusing on biophilic (nature-connected) architecture and urban planning.",
-    background: "background.png",
-    portrait: "zz-architects.png",
-    backgroundAlt: "Coastal residence opening onto an ocean terrace",
-  },
-  {
-    name: "Sanjay Puri Architects",
-    body: "Known for large, sustainable, and contextual designs across educational, retail, and housing sectors.",
-    background: "sanjay-background.png",
-    portrait: "sanjay-portrait.png",
-    backgroundAlt: "Architectural project featured with Sanjay Puri Architects",
-  },
-  {
-    name: "ZZ Architects",
-    body: "Focuses on extremely high-end, luxury, and bespoke architectural and interior design services.",
-    background: "zz-luxury-background.png",
-    portrait: "zz-luxury-portrait.png",
-    backgroundAlt: "Luxury architectural project featured with ZZ Architects",
-  },
-];
-
-/** Figma 63:1923, using the former project stage's upward wipe. */
+/** Figma 134:2195 — the architect network introduction and globe. */
 export function HomeArchitectSpotlight() {
-  const stageRef = useRef<HTMLDivElement>(null);
-
-  useIsomorphicLayoutEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-    gsap.registerPlugin(ScrollTrigger);
-    const media = gsap.matchMedia();
-    media.add("(prefers-reduced-motion: no-preference)", () => {
-      const frames = Array.from(stage.querySelectorAll<HTMLElement>(".hp-architect-frame"));
-      const backdrops = frames.map((frame) => frame.querySelector<HTMLElement>(".hp-architect-backdrop")!);
-      const cards = frames.map((frame) => frame.querySelector<HTMLElement>(".hp-architect-spotlight-card")!);
-      stage.dataset.animated = "true";
-      gsap.set(backdrops.slice(1), { clipPath: "inset(100% 0% 0% 0%)" });
-      gsap.set(cards.slice(1), { autoAlpha: 0 });
-      const timeline = gsap.timeline({
-        defaults: { ease: "none" },
-        scrollTrigger: {
-          trigger: stage,
-          start: "top top",
-          end: () => "+=" + window.innerHeight * frames.length * 0.92,
-          pin: true,
-          scrub: 0.75,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
-
-      backdrops.forEach((backdrop, index) => {
-        if (!index) return;
-        const at = 0.22 + (index - 1) * 1.18;
-        // The image wipes behind a separate card layer, so portraits never split.
-        timeline.to(backdrop,
-          { clipPath: "inset(0% 0% 0% 0%)", duration: 0.82 }, at)
-          .fromTo(backdrop.querySelector(".hp-architect-spotlight-bg"),
-            { y: () => stage.offsetHeight * 0.16 },
-            { y: 0, duration: 0.82 }, at)
-          .set(cards[index - 1], { autoAlpha: 0 }, at + 0.48)
-          .set(cards[index], { autoAlpha: 1 }, at + 0.48);
-      });
-      timeline.to({}, { duration: 0.18 });
-      let active = true;
-      void document.fonts.ready.then(() => {
-        if (active) ScrollTrigger.refresh();
-      });
-      return () => {
-        active = false;
-        delete stage.dataset.animated;
-      };
-    });
-    return () => media.revert();
-  }, []);
-
   return (
-    <section id="projects" className="hp-architect-section" aria-labelledby="hp-architect-heading">
-      <div className="hp-architect-intro">
-        <Eyebrow>Our architect network</Eyebrow>
-        <h2 id="hp-architect-heading">International expertise, chosen for you.</h2>
-        <p className="hp-architect-intro-body">
-          Every project deserves the right point of view. We connect your brief
-          with architects whose approach suits its place, purpose and ambition.
-        </p>
-      </div>
-      <div ref={stageRef} className="hp-architect-spotlight">
-      {ARCHITECT_SLIDES.map((architect, index) => (
-      <div className="hp-architect-frame" key={architect.portrait}>
-      <div className="hp-architect-backdrop" style={{ zIndex: index + 1 }}>
-        <Image
-          src={`/home/architect-spotlight/${architect.background}`}
-          alt={architect.backgroundAlt}
-          fill
-          sizes="100vw"
-          className="hp-architect-spotlight-bg"
-        />
-      </div>
-
-      <article className="hp-architect-spotlight-card" style={{ zIndex: index + 10 }}>
-        <div className="hp-architect-spotlight-copy">
-          <h3>{architect.name}</h3>
-          <p>{architect.body}</p>
+    <section id="projects" aria-labelledby="hp-architect-heading" className="relative z-[3] h-[100svh] min-h-[640px] bg-[var(--ink-ground)] px-[40px] font-[family-name:var(--font-geist)] text-white max-[700px]:px-[20px]">
+      <GuideRailBlinks />
+      <div className="flex h-full flex-col border-x border-white/10">
+        <div className="relative flex shrink-0 items-center justify-center border-b border-white/10 px-[20px] py-[40px] text-center">
+          <GuideRuleBlink className="right-0 bottom-0 left-0 z-[3]" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-1/2 w-[660px] -translate-x-1/2 border-x border-white/10 max-[700px]:hidden" />
+          <div className="relative z-10 flex max-w-[660px] flex-col items-center">
+            <Eyebrow>Our architect network</Eyebrow>
+            <SplitText tag="h2" id="hp-architect-heading" className="mt-[12px] max-w-[578px] text-[48px] leading-[56px] font-normal tracking-[-0.02em] max-[700px]:text-[38px] max-[700px]:leading-[44px] max-[480px]:text-[32px] max-[480px]:leading-[38px]">
+              International expertise,<br className="max-[480px]:hidden" /> chosen for you.
+            </SplitText>
+            <p className="mt-[12px] max-w-[578px] text-[16px] leading-[24px] max-[480px]:text-[14px] max-[480px]:leading-[21px]">
+              Every project deserves the right point of view. We connect your brief with architects whose approach suits its place, purpose and ambition.
+            </p>
+          </div>
         </div>
 
-        <ul className="hp-architect-awards" aria-label="Recognition">
-          {AWARDS.map((award) => (
-            <li key={award.src}>
-              <Image src={award.src} alt={award.alt} width={80} height={80} />
-            </li>
-          ))}
-        </ul>
-
-        <div className="hp-architect-portrait">
-          <Image
-            src={`/home/architect-spotlight/${architect.portrait}`}
-            alt={`Architects from ${architect.name}`}
-            fill
-            sizes="(max-width: 640px) calc(100vw - 64px), 468px"
-            className="object-cover"
-          />
-        </div>
-      </article>
-      </div>
-      ))}
+        <ArchitectGlobeStage />
       </div>
     </section>
   );

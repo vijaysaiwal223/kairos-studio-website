@@ -5,46 +5,73 @@ type Offering = { title: string; body: string; video: string; poster: string };
 
 export const OFFERINGS: Offering[] = [
   {
-    title: "Architect Matching",
-    body: "We connect your brief with architects whose ideas, experience and approach suit your project.",
+    title: "Idea",
+    body: "We listen to your ambitions and extraordinary, study the site and define what the project could become.",
     video: "/home/process/1.webm",
     poster: "/home/process/1.png",
   },
   {
-    title: "Design Management",
-    body: "We shape a shared direction and keep the architect, specialists and decisions aligned.",
+    title: "Strategy",
+    body: "We turn the brief into a clear direction and bring the right architects and specialists together.",
     video: "/home/process/2.webm",
     poster: "/home/process/2.png",
   },
   {
-    title: "Approvals & Compliance",
-    body: "We coordinate local requirements and approvals while protecting the design intent.",
+    title: "Design",
+    body: "We shape the concept around its place, purpose and the people who will use it.",
     video: "/home/process/3.webm",
     poster: "/home/process/3.png",
   },
   {
-    title: "Technical Integration",
-    body: "We bring structure, services, interiors and materials into one coherent design.",
+    title: "Development",
+    body: "We coordinate drawings, details, approvals and technical input to make the design buildable.",
     video: "/home/process/4.webm",
     poster: "/home/process/4.png",
   },
   {
-    title: "Turnkey Construction",
-    body: "We coordinate budgets, procurement and site delivery through to handover.",
+    title: "Execution",
+    body: "We align the team, budget, procurement and site work as the project takes shape.",
     video: "/home/process/5.webm",
     poster: "/home/process/5.png",
   },
   {
-    title: "Aftercare",
-    body: "We remain a point of contact as the space settles into use.",
+    title: "Delivery",
+    body: "We guide the final handover and help the finished space settle into use.",
     video: "/home/process/6.webm",
     poster: "/home/process/6.png",
   },
 ];
 
-/** Service cards shown on the homepage. */
+/** Service categories in the Figma 25:470 overview. */
 export const SERVICES = [
-  { title: "Interior Design", body: "Spaces shaped around the way people live, work and gather.", image: "/home/expertise/interior-design.png", imageAlt: "Bedroom with a lit headboard and floor-length curtains" },
-  { title: "Commercial Spaces", body: "Places that express a business clearly and work for the people inside them.", image: "/home/expertise/commercial-spaces.jpg", imageAlt: "Terracotta retail interior with skylights, garment rails and a stone display plinth" },
-  { title: "Residential Architecture", body: "Homes responsive to their site and the rhythms of everyday life.", image: "/home/expertise/residential-architecture.jpg", imageAlt: "A long timber-roofed house on a concrete base, set among mature trees" },
+  {
+    title: "Strategy / Consulting",
+    heading: "A clear direction for every decision that follows.",
+    body: "We test the possibilities, sharpen the brief and bring the right people together so each project begins with purpose.",
+    image: "/home/expertise/consulting-figma.png",
+  },
+  {
+    title: "Design",
+    heading: "Spaces shaped around the people who use them.",
+    body: "We guide the creative work from first concept to considered detail, balancing imagination with the needs of the place.",
+    image: "/home/expertise/interior.jpg",
+  },
+  {
+    title: "Project Management",
+    heading: "One team, one plan, every detail in view.",
+    body: "We keep architects, specialists, budgets and decisions aligned throughout the project, with a clear point of contact.",
+    image: "/home/expertise/procurement.jpg",
+  },
+  {
+    title: "Execution",
+    heading: "The design intent carried through to the site.",
+    body: "We coordinate the work on the ground, resolve details as they arise and keep delivery moving toward the shared vision.",
+    image: "/home/expertise/architecture.jpg",
+  },
+  {
+    title: "Bespoke / End-to-End Solutions",
+    heading: "A complete service shaped around your ambition.",
+    body: "From the earliest conversation to final handover, we assemble the right expertise and guide the entire journey.",
+    image: "/home/expertise/marketing.jpg",
+  },
 ] as const;

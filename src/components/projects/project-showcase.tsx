@@ -6,7 +6,6 @@ import { TextReveal } from "../motion/text-reveal";
 import ScrollReveal from "../ui/scroll-reveal";
 import { HeroVideo } from "./hero-video";
 import { ProjectPlans } from "./project-plans";
-import { SiteNav } from "../site/site-nav";
 import {
   COLLAGE_FRAME,
   CONTENT_WIDTH,
@@ -27,8 +26,8 @@ import {
  *
  * Geometry lives in the .ps-* block in globals.css; the only measurements
  * below are the ones that vary per project, which is the collage placement.
- * The component is a Server Component and ships no JavaScript of its own —
- * SiteNav is the one client island, as it is on the homepage.
+ * The component is a Server Component; the shared navigation lives in the
+ * root layout.
  */
 
 /**
@@ -88,12 +87,12 @@ export function ProjectShowcase({
 }) {
   return (
     <>
-      <main className="ps-page">
-        <section className="ps-hero">
+      <main className="ps-page  [background:var(--background)] [color:var(--foreground)]">
+        <section className="ps-hero  [position:relative] [height:100svh] [overflow:hidden] [isolation:isolate] [background:#000] max-[900px]:[height:640px]">
           {/* Footage when the project has it, the still on its own
               otherwise. Either way the still is what paints first, so the
               hero is never empty while the loop loads. */}
-          <div className="ps-hero-bg" style={cropStyle(project.hero)}>
+          <div className="ps-hero-bg  [position:absolute] [inset:0] [&_>_img]:[object-position:var(--ps-pos,_50%_50%)] [&_>_video]:[object-position:var(--ps-pos,_50%_50%)]" style={cropStyle(project.hero)}>
             {project.hero.video ? (
               /* The hero is a screenful and the clip is a few seconds, so the
                  page is held at the top until it has played rather than
@@ -115,47 +114,43 @@ export function ProjectShowcase({
             )}
           </div>
 
-          <div aria-hidden className="ps-hero-scrim" />
+          <div aria-hidden className="ps-hero-scrim  [position:absolute] [inset:0] [background:linear-gradient(to_right,_rgba(0,_0,_0,_0.4),_rgba(0,_0,_0,_0))]" />
 
-          <div className="ps-hero-nav">
-            <SiteNav />
-          </div>
-
-          <div className="ps-hero-copy">
+          <div className="ps-hero-copy  [position:absolute] [top:0] [bottom:0] [left:var(--site-gutter)] [z-index:1] [display:flex] [width:573px] [max-width:calc(100%_-_var(--site-gutter)_*_2)] [flex-direction:column] [align-items:flex-start] [justify-content:center] [gap:24px] [color:#fff] max-[900px]:[width:auto] max-[900px]:[right:var(--site-gutter)]">
             <ArchitectBadge
               name={project.architect.name}
               base={project.architect.base}
               portrait={project.architect.portrait}
             />
 
-            <TextReveal trigger="load" className="ps-hero-type">
-              <h1 className="ps-title">{project.title}</h1>
-              <p className="ps-summary">{project.summary}</p>
+            <TextReveal trigger="load" className="ps-hero-type  [display:flex] [width:100%] [flex-direction:column] [align-items:flex-start] [gap:24px]">
+              <h1 className="ps-title  [font-size:var(--type-display)] [line-height:1.04] [font-weight:600] [letter-spacing:-0.05em]">{project.title}</h1>
+              <p className="ps-summary  [font-size:var(--type-body)] [line-height:var(--type-body-lh)] [font-weight:500]">{project.summary}</p>
             </TextReveal>
           </div>
         </section>
 
-        <div className="ps-body">
-          <section className="ps-overview">
+        <div className="ps-body  [padding-inline:var(--site-gutter)] [padding-bottom:var(--ps-closing-gap)]">
+          <section className="ps-overview  [display:flex] [justify-content:space-between] [margin-top:40px] max-[900px]:[flex-direction:column] max-[900px]:[gap:48px]">
             {/* Figma draws the facts as rows and rules rather than a table, but
               they are a table: each row is one heading and its one value. */}
-            <dl className="ps-specs">
+            <dl className="ps-specs  [display:flex] [width:29.4118%] [flex-direction:column] [gap:16px] max-[900px]:[width:100%]">
               {project.specs.map((spec) => (
-                <div key={spec.label} className="ps-spec-row">
-                  <dt className="ps-spec-label">
+                <div key={spec.label} className="ps-spec-row  [position:relative] [display:flex] [height:32px] [align-items:center] [gap:12px] [padding:4px] [&:not(:last-child)::after]:[content:''] [&:not(:last-child)::after]:[position:absolute] [&:not(:last-child)::after]:[top:calc(100%_+_8px)] [&:not(:last-child)::after]:[right:0] [&:not(:last-child)::after]:[left:0] [&:not(:last-child)::after]:[height:0] [&:not(:last-child)::after]:[border-top:1px_solid_var(--spec-rule)]">
+                  <dt className="ps-spec-label  [display:flex] [flex:0_0_51.0204%] [align-items:center] [gap:9px] [color:var(--spec-label)] [font-size:var(--type-body)] [line-height:var(--type-body-lh)] [font-weight:500] [&_svg]:[flex:none]">
                     <SpecIcon name={spec.icon} />
                     {spec.label}
                   </dt>
-                  <dd className="ps-spec-value">{spec.value}</dd>
+                  <dd className="ps-spec-value  [min-width:0] [font-size:var(--type-body)] [line-height:var(--type-body-lh)] [font-weight:500] [color:var(--foreground)]">{spec.value}</dd>
                 </div>
               ))}
             </dl>
 
-            <div className="ps-overview-copy">
+            <div className="ps-overview-copy  [display:flex] [width:48.5294%] [flex-direction:column] [gap:8px] max-[900px]:[width:100%]">
               <ScrollReveal
                 rotationEnd="top 52%"
                 wordAnimationEnd="center 52%"
-                containerClassName="ps-overview-heading"
+                containerClassName="ps-overview-heading  [font-size:var(--type-lead)] [line-height:var(--type-lead-lh)] [font-weight:600] [color:var(--foreground)]"
               >
                 {project.overview.heading}
               </ScrollReveal>
@@ -166,7 +161,7 @@ export function ProjectShowcase({
                 blurStrength={3}
                 rotationEnd="top 58%"
                 wordAnimationEnd="bottom 42%"
-                containerClassName="ps-overview-body"
+                containerClassName="ps-overview-body  [font-size:var(--type-body)] [line-height:var(--type-body-lh)] [font-weight:500] [color:var(--foreground)]"
               >
                 {project.overview.body}
               </ScrollReveal>
@@ -176,7 +171,7 @@ export function ProjectShowcase({
           <ProjectPlans drawings={project.plans.drawings} />
 
           <figure
-            className="ps-feature ps-feature-first"
+            className="ps-feature ps-feature-first  [&_>_img]:[object-position:var(--ps-pos,_50%_50%)] [position:relative] [margin-top:200px] [aspect-ratio:1360_/_944]"
             style={cropStyle(project.features.first)}
           >
             <Image
@@ -191,11 +186,11 @@ export function ProjectShowcase({
             />
           </figure>
 
-          <section className="ps-collage" aria-label="Gallery">
+          <section className="ps-collage  [position:relative] [aspect-ratio:1360_/_2694] [margin-top:160px]" aria-label="Gallery">
             {project.collage.map((item, index) => (
               <figure
                 key={`${item.src}-${index}`}
-                className="ps-collage-item"
+                className="ps-collage-item  [&_>_img]:[object-position:var(--ps-pos,_50%_50%)] [position:absolute] [left:var(--ps-x)] [top:var(--ps-y)] [width:var(--ps-w)] [height:var(--ps-h)] [overflow:hidden]"
                 style={
                   {
                     "--ps-x": pct(item.x, COLLAGE_FRAME.width),
@@ -221,7 +216,7 @@ export function ProjectShowcase({
           </section>
 
           <figure
-            className="ps-feature ps-feature-second"
+            className="ps-feature ps-feature-second  [&_>_img]:[object-position:var(--ps-pos,_50%_50%)] [position:relative] [margin-top:200px] [aspect-ratio:1360_/_850]"
             style={cropStyle(project.features.second)}
           >
             <Image
@@ -236,7 +231,7 @@ export function ProjectShowcase({
             />
           </figure>
 
-          <div className="ps-closing">
+          <div className="ps-closing  [display:flex] [width:49.4118%] [flex-direction:column] [gap:40px] [margin-top:160px] [margin-left:auto] [&_p]:[font-size:var(--type-body)] [&_p]:[line-height:var(--type-body-lh)] [&_p]:[font-weight:500] [&_p]:[color:#000] max-[900px]:[width:100%]">
             {project.closing.map((paragraph, index) => (
               <ScrollReveal
                 key={index}

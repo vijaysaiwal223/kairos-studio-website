@@ -15,7 +15,7 @@ export default function NotFound() {
         </Link>
         .
       </p>
-      <SiteCta href="/" className="site-cta--hero">
+      <SiteCta href="/" className="site-cta--hero  [width:fit-content] [padding:4px_8px_4px_4px] [&:is(:hover,_:focus-visible)]:[width:fit-content] [&:is(:hover,_:focus-visible)]:[padding:4px_8px_4px_4px] [margin-top:12px]">
         Back to home
       </SiteCta>
     </main>

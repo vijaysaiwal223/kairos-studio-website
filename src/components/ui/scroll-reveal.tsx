@@ -11,8 +11,6 @@ import {
 
 import { useIsomorphicLayoutEffect } from "@/lib/use-isomorphic-layout-effect";
 
-import styles from "./scroll-reveal.module.css";
-
 export type ScrollRevealProps = {
   children: ReactNode;
   as?: "h1" | "h2" | "h3" | "p";
@@ -49,14 +47,14 @@ export default function ScrollReveal({
 
   const content = useMemo(() => {
     if (typeof children !== "string") {
-      return <span className={styles.word}>{children}</span>;
+      return <span data-reveal-word className="inline-block motion-reduce:!transform-none motion-reduce:!filter-none motion-reduce:!opacity-100">{children}</span>;
     }
 
     return children.split(/(\s+)/).map((part, index) => {
       if (/^\s+$/.test(part)) return part;
 
       return (
-        <span className={styles.word} key={`${part}-${index}`}>
+        <span data-reveal-word className="inline-block motion-reduce:!transform-none motion-reduce:!filter-none motion-reduce:!opacity-100" key={`${part}-${index}`}>
           {part}
         </span>
       );
@@ -74,7 +72,7 @@ export default function ScrollReveal({
     const context = gsap.context(() => {
       media.add("(prefers-reduced-motion: no-preference)", () => {
         const words = Array.from(
-          element.querySelectorAll<HTMLElement>(`.${styles.word}`),
+          element.querySelectorAll<HTMLElement>("[data-reveal-word]"),
         );
         const withScroller = scroller ? { scroller } : {};
 
@@ -142,9 +140,9 @@ export default function ScrollReveal({
         containerRef.current = node;
       }}
       data-scroll-reveal
-      className={`${styles.scrollReveal} ${containerClassName}`.trim()}
+      className={`origin-[0%_50%] motion-reduce:!transform-none motion-reduce:!filter-none motion-reduce:!opacity-100 ${containerClassName}`.trim()}
     >
-      <span className={`${styles.text} ${textClassName}`.trim()}>
+      <span className={`block ${textClassName}`.trim()}>
         {content}
       </span>
     </Element>

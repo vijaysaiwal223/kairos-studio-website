@@ -18,8 +18,8 @@ type ArchitectBadgeProps = {
 
 export function ArchitectBadge({ name, base, portrait }: ArchitectBadgeProps) {
   return (
-    <p className="credit">
-      <span aria-hidden className="credit-marks">
+    <p className="credit  [display:flex] [align-items:flex-end] [gap:4px] [padding:8px_12px_8px_0] [border-radius:8px] [background:rgba(0,_0,_0,_0.5)]">
+      <span aria-hidden className="credit-marks  [display:flex] [align-items:center] [&_>_*]:[display:block] [&_>_*]:[width:40px] [&_>_*]:[height:40px] [&_>_*]:[flex:none] [&_>_:not(:last-child)]:[margin-right:-12px]">
         {/* One exported wreath (node 94:564), mirrored for the left — the two
             Figma exports are the same geometry, mirrored about x=20.5. Served
             as a file rather than inlined: it is ~4.8KB of path data and
@@ -30,9 +30,9 @@ export function ArchitectBadge({ name, base, portrait }: ArchitectBadgeProps) {
           alt=""
           width={40}
           height={40}
-          className="credit-wreath-left"
+          className="credit-wreath-left  [transform:scaleX(-1)]"
         />
-        <span className="credit-avatar">
+        <span className="credit-avatar  [overflow:hidden] [border-radius:99px] [background:#d9d9d9]">
           <Image
             src={portrait}
             alt=""
@@ -46,9 +46,9 @@ export function ArchitectBadge({ name, base, portrait }: ArchitectBadgeProps) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/icons/laurel.svg" alt="" width={40} height={40} />
       </span>
-      <span className="credit-text">
-        <span className="credit-name">{name}</span>
-        <span className="credit-role">{base}</span>
+      <span className="credit-text  [display:flex] [flex-direction:column] [align-items:flex-start] [white-space:nowrap]">
+        <span className="credit-name  [font-size:var(--type-body)] [line-height:var(--type-body-lh)] [font-weight:600]">{name}</span>
+        <span className="credit-role  [font-size:var(--type-caption)] [line-height:var(--type-caption-lh)] [font-weight:500] [color:#dfdfdf]">{base}</span>
       </span>
     </p>
   );

@@ -196,8 +196,8 @@ export function ProjectPlans({ drawings }: { drawings: ProjectImage[] }) {
   }, [active]);
 
   return (
-    <section className="ps-plans" aria-label="Drawings">
-      <div ref={stageRef} className="ps-plan-stage">
+    <section className="ps-plans  [margin-top:160px]" aria-label="Drawings">
+      <div ref={stageRef} className="ps-plan-stage  [position:relative] [aspect-ratio:1360_/_636] [&[data-swapping=true]_.ps-plan-cell]:[border-color:transparent]">
         {drawings.map((drawing, index) => {
           const isActive = index === active;
           // Rank among the drawings not currently in the main frame, which is
@@ -212,7 +212,7 @@ export function ProjectPlans({ drawings }: { drawings: ProjectImage[] }) {
                 else cells.current.delete(index);
               }}
               type="button"
-              className="ps-plan-cell"
+              className="ps-plan-cell  [&_>_img]:[object-position:var(--ps-pos,_50%_50%)] [position:absolute] [left:var(--slot-x)] [top:var(--slot-y)] [width:var(--slot-w)] [height:var(--slot-h)] [overflow:hidden] [border:1px_solid_var(--thumb-rule)] [background:#171817] [transform-origin:0_0] [cursor:pointer] [&[aria-current=true]]:[cursor:default] [&:focus-visible]:[outline:2px_solid_var(--foreground)] [&:focus-visible]:[outline-offset:3px] [&:not([aria-current=true]):hover]:[border-color:var(--thumb-hover)] [color:var(--foreground)] [border-color:var(--thumb-rule)]"
               style={isActive ? layout.main : layout.rail[rank]}
               aria-current={isActive ? "true" : undefined}
               aria-label={isActive ? undefined : `Show ${drawing.alt}`}
@@ -232,7 +232,7 @@ export function ProjectPlans({ drawings }: { drawings: ProjectImage[] }) {
           );
         })}
 
-        <div className="ps-plan-nav" style={layout.nav}>
+        <div className="ps-plan-nav  [position:absolute] [left:var(--slot-x)] [top:var(--slot-y)] [display:flex] [width:var(--slot-w)] [align-items:center] [justify-content:space-between] [gap:8px] [&_button]:[color:var(--foreground)] [&_button]:[font-size:var(--type-body)] [&_button]:[line-height:var(--type-body-lh)] [&_button]:[font-weight:500] [&_button]:[cursor:pointer] [&_button]:[transition:opacity_200ms_ease-out] [&_button:hover]:[opacity:0.6] [&_button:focus-visible]:[outline:2px_solid_var(--foreground)] [&_button:focus-visible]:[outline-offset:3px]" style={layout.nav}>
           <button type="button" onClick={() => step(-1)}>
             Previous
           </button>

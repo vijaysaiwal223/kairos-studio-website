@@ -220,12 +220,12 @@ export function HeroSequence({ dir, count, poster, alt }: HeroSequenceProps) {
           picture at a known size, and it has to be the very first byte the
           hero paints. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={poster} alt={alt} loading="eager" fetchPriority="high" className="pe-hero-poster" />
+      <img src={poster} alt={alt} loading="eager" fetchPriority="high" className="pe-hero-poster  [position:absolute] [inset:0] [width:100%] [height:100%] [object-fit:cover]" />
 
       <canvas
         ref={canvasRef}
         aria-hidden
-        className="pe-hero-canvas"
+        className="pe-hero-canvas  [position:absolute] [inset:0] [display:block] [width:100%] [height:100%] [opacity:0] [&[data-painting=true]]:[opacity:1]"
         data-painting={painting ? "true" : undefined}
       />
     </>

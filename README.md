@@ -1,6 +1,6 @@
-# Kairos Studio website
+# kai.ros Studio website
 
-Next.js App Router site for Kairos Studio. The homepage is static, and project pages are generated from the records in `src/data/projects.ts`.
+Next.js App Router site for kai.ros Studio. The homepage is static, and project pages are generated from the records in `src/data/projects.ts`.
 
 ## Run locally
 
