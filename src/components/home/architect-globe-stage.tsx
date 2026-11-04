@@ -133,7 +133,7 @@ export function ArchitectGlobeStage() {
         <button
           type="button"
           onClick={openControls}
-          className="absolute right-[24px] top-[24px] z-30 rounded-[8px] border border-white/15 bg-[#252525]/90 px-[14px] py-[9px] font-[family-name:var(--font-geist-mono)] text-[12px] tracking-[0.08em] text-white uppercase backdrop-blur-sm transition-colors hover:bg-[#353535] focus-visible:outline-2 focus-visible:outline-[#83ff83] max-[700px]:right-[12px] max-[700px]:top-[12px]"
+          className="absolute right-[24px] top-[24px] z-30 rounded-[8px] border border-white/15 bg-[#252525]/90 px-[14px] py-[9px] font-[family-name:var(--font-geist-mono)] text-[12px] tracking-[0.08em] text-white uppercase backdrop-blur-sm transition-colors hover:bg-[#353535] focus-visible:outline-2 focus-visible:outline-white max-[700px]:right-[12px] max-[700px]:top-[12px]"
         >
           Tune globe
         </button>
@@ -152,7 +152,7 @@ export function ArchitectGlobeStage() {
               type="checkbox"
               checked={settings.autoRotate}
               onChange={(event) => setSettings((current) => ({ ...current, autoRotate: event.target.checked }))}
-              className="size-[17px] accent-[#83ff83]"
+              className="size-[17px] accent-[#D9D9D9]"
             />
           </label>
 
@@ -161,7 +161,7 @@ export function ArchitectGlobeStage() {
               <label key={control.key} className="block">
                 <span className="mb-[4px] flex items-center justify-between gap-[12px] text-[12px]">
                   <span>{control.label}</span>
-                  <output className="font-[family-name:var(--font-geist-mono)] tabular-nums text-[#83ff83]">
+                  <output className="font-[family-name:var(--font-geist-mono)] tabular-nums text-[#D9D9D9]">
                     {control.key === "speed" ? settings.speed.toFixed(4) : settings[control.key]}{control.unit}
                   </output>
                 </span>
@@ -173,14 +173,14 @@ export function ArchitectGlobeStage() {
                   step={control.step}
                   value={settings[control.key]}
                   onChange={(event) => change(control.key, Number(event.target.value))}
-                  className="block h-[20px] w-full cursor-pointer accent-[#83ff83]"
+                  className="block h-[20px] w-full cursor-pointer accent-[#D9D9D9]"
                 />
               </label>
             ))}
           </div>
 
           <div className="mt-[16px] flex gap-[8px]">
-            <button type="button" onClick={copySettings} className="flex-1 rounded-[6px] bg-[#83ff83] px-[10px] py-[8px] text-[12px] font-medium text-[#151515] hover:bg-[#a4ffa4]">
+            <button type="button" onClick={copySettings} className="flex-1 rounded-[6px] bg-[#D9D9D9] px-[10px] py-[8px] text-[12px] font-medium text-[#151515] transition-[filter] hover:brightness-110">
               {copied ? "Copied" : "Copy values"}
             </button>
             <button type="button" onClick={() => { setSettings(DEFAULT_SETTINGS); setCopied(false); }} className="rounded-[6px] border border-white/20 px-[10px] py-[8px] text-[12px] hover:bg-white/10">
@@ -188,7 +188,7 @@ export function ArchitectGlobeStage() {
             </button>
           </div>
           <p className="mt-[8px] mb-[6px] text-[11px] leading-[15px] text-white/60">Send me these values once the globe looks right:</p>
-          <textarea readOnly aria-label="Current globe values" value={JSON.stringify(settings, null, 2)} onFocus={(event) => event.currentTarget.select()} className="h-[112px] w-full resize-none rounded-[6px] border border-white/10 bg-black/25 p-[8px] font-[family-name:var(--font-geist-mono)] text-[10px] leading-[14px] text-white/75 focus-visible:outline-2 focus-visible:outline-[#83ff83]" />
+          <textarea readOnly aria-label="Current globe values" value={JSON.stringify(settings, null, 2)} onFocus={(event) => event.currentTarget.select()} className="h-[112px] w-full resize-none rounded-[6px] border border-white/10 bg-black/25 p-[8px] font-[family-name:var(--font-geist-mono)] text-[10px] leading-[14px] text-white/75 focus-visible:outline-2 focus-visible:outline-white" />
         </aside>
       )}
     </div>

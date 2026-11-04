@@ -69,14 +69,11 @@ export function SmoothScroll() {
   }, []);
 
   useIsomorphicLayoutEffect(() => {
-    // Next 16 intentionally preserves the current scroll position when the
-    // next page is tall enough to remain visible at that offset. That is useful
-    // for list/detail interfaces, but a project is a new visual story and must
-    // always begin on its hero. Reset both the native document and Lenis before
-    // the new route paints, then repeat once on the next frame so neither
-    // Next's navigation pass nor Lenis's cached target can restore the old
-    // homepage position.
-    if (!pathname.startsWith("/projects/")) return;
+    // Next 16 can preserve scroll position across routes when the next page is
+    // tall enough. Content pages should open at their own beginning. Reset both
+    // native scrolling and Lenis before the new route paints, then repeat once
+    // on the next frame so navigation cannot restore the previous position.
+    if (pathname === "/") return;
 
     const reset = () => {
       getSmoothScroll()?.scrollTo(0, { immediate: true, force: true });

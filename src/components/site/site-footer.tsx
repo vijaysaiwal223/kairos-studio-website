@@ -8,7 +8,7 @@ const NAVIGATION = [
   { label: "Home", href: "/" },
   { label: "Portfolio", href: "/#project-gallery" },
   { label: "Architects", href: "/#projects" },
-  { label: "About us", href: "/#about" },
+  { label: "About us", href: "/about-us" },
 ];
 
 const FEATURED_PROJECTS = [

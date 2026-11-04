@@ -1,9 +1,9 @@
+import { ArchitectNetworkGlobe } from "@/components/home/architect-network-globe";
 import { Founder } from "@/components/home/founder";
 import { HomeArchitectSpotlight } from "@/components/home/home-architect-spotlight";
 import { HomeConversation } from "@/components/home/home-conversation";
 import { HomeHero } from "@/components/home/home-hero";
 import { HowWeWork } from "@/components/home/how-we-work";
-import { KairosStory } from "@/components/home/kairos-story";
 import { LoadingScreen } from "@/components/home/loading-screen";
 import { OfferList } from "@/components/home/offer-list";
 import { ProjectGallery } from "@/components/home/project-gallery";
@@ -23,9 +23,6 @@ export default function Home() {
       <SectionDivider />
       <Founder />
       <SectionDivider />
-      <KairosStory />
-      <SectionDivider />
-
       <OfferList />
       <SectionDivider />
       <ServiceCards />
@@ -35,6 +32,8 @@ export default function Home() {
       <ProjectGallery />
       <SectionDivider />
       <HomeArchitectSpotlight />
+      <SectionDivider />
+      <ArchitectNetworkGlobe />
       <SectionDivider />
       <WhyKairos />
       <SectionDivider />

@@ -121,14 +121,14 @@ export function OfferList() {
                 {CORNERS.map((corner) => (
                   <Image key={corner.src} src={corner.src} alt="" width={17} height={17} className={`pointer-events-none absolute ${corner.position}`} />
                 ))}
-                <article className="flex h-full flex-col overflow-hidden bg-white px-[24px] pt-[24px] pb-[12px] text-[#0e0c0c] max-[767px]:px-[16px]">
+                <article className="flex h-full flex-col overflow-hidden bg-[#2D2D2D] px-[24px] pt-[24px] pb-[12px] text-white max-[767px]:px-[16px]">
                   <div>
                     <h3 className="m-0 text-[20px] leading-[28px] font-medium tracking-[-0.02em]">{offering.title}</h3>
-                    <p className="mt-[8px] mb-0 text-[16px] leading-[24px] font-medium tracking-[-0.02em] text-[#737373] max-[767px]:text-[15px] max-[767px]:leading-[22px]">
+                    <p className="mt-[8px] mb-0 text-[16px] leading-[24px] font-medium tracking-[-0.02em] text-[#BDBDBD] max-[767px]:text-[15px] max-[767px]:leading-[22px]">
                       {offering.body}
                     </p>
                   </div>
-                  <video data-process-video muted loop playsInline preload="none" poster={offering.poster} className="mt-auto aspect-square w-[298px] max-w-full shrink-0 self-center object-contain" aria-hidden="true">
+                  <video data-process-video muted loop playsInline preload="none" poster={offering.poster} className="mt-auto aspect-square w-[298px] max-w-full shrink-0 self-center object-contain mix-blend-screen" aria-hidden="true">
                     <source src={offering.video} type="video/webm" />
                   </video>
                 </article>

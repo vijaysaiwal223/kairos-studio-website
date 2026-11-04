@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { GuideRailBlinks, GuideRuleBlink } from "@/components/ui/guide-blinks";
 import { SplitText } from "@/components/ui/split-text";
+import { WhyKairosEmblem } from "@/components/home/why-kairos-emblem";
 
 const REASONS = {
   expertise: {
@@ -65,13 +66,7 @@ export function WhyKairos() {
           </div>
 
           <div className="flex min-w-0 items-center justify-center border-r border-white/10 p-[40px] max-[1100px]:order-1 max-[1100px]:col-span-2 max-[1100px]:border-r-0 max-[1100px]:border-b max-[700px]:col-span-1 max-[700px]:p-[24px]">
-            <Image
-              src="/home/why-kairos/central-137-2759.svg"
-              alt="kai.ros emblem inside an architectural measurement frame"
-              width={400}
-              height={400}
-              className="block h-auto max-w-full"
-            />
+            <WhyKairosEmblem />
           </div>
 
           <div className="grid min-w-0 grid-rows-2 max-[1100px]:order-3">

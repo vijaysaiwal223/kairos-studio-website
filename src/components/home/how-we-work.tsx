@@ -121,8 +121,8 @@ function StepPanel({ step, index }: { step: Step; index: number }) {
         </div>
       </div>
       <span className="pointer-events-none absolute inset-y-0 left-1/2 w-px bg-white/20 max-[900px]:hidden motion-reduce:hidden" aria-hidden="true">
-        <span className="absolute top-0 left-0 h-[var(--work-progress,0%)] w-px bg-[#83ff83]" />
-        <span className="absolute top-[var(--work-progress,0%)] left-1/2 h-[6px] w-[6px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#83ff83]" />
+        <span className="absolute top-0 left-0 h-[var(--work-progress,0%)] w-px bg-[#FF9152]" />
+        <span className="absolute top-[var(--work-progress,0%)] left-1/2 h-[6px] w-[6px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FF9152]" />
       </span>
     </article>
   );

@@ -119,9 +119,9 @@ export function GlobePolaroids({
         diffuse: 1.35,
         mapSamples: 16000,
         mapBrightness: 8,
-        baseColor: [0.44, 0.48, 0.45],
-        markerColor: [0.51, 1, 0.51],
-        glowColor: [0.12, 0.18, 0.14],
+        baseColor: [0.46, 0.46, 0.46],
+        markerColor: [0.88, 0.88, 0.88],
+        glowColor: [0.12, 0.12, 0.12],
         markerElevation: 0.02,
         markers: markers.map((marker) => ({ id: marker.id, location: marker.location, size: marker.size ?? 0.025 })),
         arcs: markers
@@ -130,7 +130,7 @@ export function GlobePolaroids({
             from: CHANDIGARH_LOCATION,
             to: marker.location,
           })),
-        arcColor: [0.33, 0.73, 0.48],
+        arcColor: [0.72, 0.72, 0.72],
         arcWidth: 0.35,
         arcHeight: 0.18,
       });
@@ -191,7 +191,7 @@ export function GlobePolaroids({
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute z-10 whitespace-nowrap rounded-[4px] border border-[#83ff83]/40 bg-[#181b18]/85 px-[7px] py-[4px] font-[family-name:var(--font-geist-mono)] text-[9px] tracking-[0.06em] text-[#a7ffa7] uppercase backdrop-blur-sm transition-[opacity,filter] duration-300"
+        className="pointer-events-none absolute z-10 whitespace-nowrap rounded-[4px] border border-white/40 bg-[#1f1f1f]/85 px-[7px] py-[4px] font-[family-name:var(--font-geist-mono)] text-[9px] tracking-[0.06em] text-white/85 uppercase backdrop-blur-sm transition-[opacity,filter] duration-300"
         style={{
           positionAnchor: "--cobe-chandigarh",
           top: "anchor(center)",
@@ -222,10 +222,10 @@ export function GlobePolaroids({
           <span className="absolute inset-x-[3px] bottom-[4px] text-center font-[family-name:var(--font-geist)] text-[11px] leading-[12px] text-white">
             {marker.profile.name}
           </span>
-          <span aria-hidden="true" className="absolute left-0 top-0 size-[12px] border-l border-t border-[#ff9252]" />
-          <span aria-hidden="true" className="absolute right-0 top-0 size-[12px] border-r border-t border-[#ff9252]" />
-          <span aria-hidden="true" className="absolute bottom-0 left-0 size-[12px] border-b border-l border-[#ff9252]" />
-          <span aria-hidden="true" className="absolute bottom-0 right-0 size-[12px] border-b border-r border-[#ff9252]" />
+          <span aria-hidden="true" className="absolute left-0 top-0 size-[12px] border-l border-t border-white/70" />
+          <span aria-hidden="true" className="absolute right-0 top-0 size-[12px] border-r border-t border-white/70" />
+          <span aria-hidden="true" className="absolute bottom-0 left-0 size-[12px] border-b border-l border-white/70" />
+          <span aria-hidden="true" className="absolute bottom-0 right-0 size-[12px] border-b border-r border-white/70" />
         </div>
       ))}
     </div>

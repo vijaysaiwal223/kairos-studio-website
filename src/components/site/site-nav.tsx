@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Portfolio", href: "/#project-gallery" },
   { label: "Architects", href: "/#projects" },
-  { label: "About us", href: "/#about" },
+  { label: "About us", href: "/about-us" },
 ];
 
 const NAV_CORNERS = [
@@ -154,7 +154,7 @@ export function SiteNav() {
     <>
       <nav className={"site-header-wide fixed bottom-[40px] left-1/2 h-[56px] max-w-[calc(100vw-32px)] -translate-x-1/2 font-[family-name:var(--font-geist-mono)] text-white shadow-[0_12px_28px_rgb(0_0_0_/_22%)] backdrop-blur-[10px] transition-[width,background-color] duration-300 ease-linear motion-reduce:duration-0 [&_:is(a,button):focus-visible]:outline-2 [&_:is(a,button):focus-visible]:outline-offset-4 [&_:is(a,button):focus-visible]:outline-white max-[700px]:bottom-[16px] " + (expanded ? "w-[56px] bg-black/10 " : "w-[320px] bg-black/75 ") + (open ? "z-[110] " : "z-[90] ") + (footerVisible && !open ? "invisible pointer-events-none" : "")} aria-label="Main navigation">
         {!open && <span aria-hidden="true" className="pointer-events-none absolute right-0 bottom-0 left-0 h-px overflow-hidden motion-reduce:hidden">
-          <span className="absolute inset-y-0 left-0 w-[34%] animate-[nav-line-pulse_3.4s_linear_infinite] bg-gradient-to-r from-transparent via-[#91ff9b]/80 to-transparent shadow-[0_0_8px_#91ff9b]" />
+          <span className="absolute inset-y-0 left-0 w-[34%] animate-[nav-line-pulse_3.4s_linear_infinite] bg-gradient-to-r from-transparent via-[#FF9152]/80 to-transparent shadow-[0_0_8px_#FF9152]" />
         </span>}
         <NavCorners />
         <Image src="/home/hero/header-mark.png" width={40} height={40} alt="" className={"absolute top-[8px] left-[16px] h-[40px] w-[40px] object-contain transition-opacity duration-150 ease-linear motion-reduce:duration-0 " + (expanded ? "pointer-events-none opacity-0" : "opacity-100")} />

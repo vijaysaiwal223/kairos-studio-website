@@ -25,14 +25,14 @@ export function StandsFor() {
 
       <svg className="stands-for-ring stands-for-ring--outer [position:absolute] [top:50%] [left:50%] [width:min(calc(100%_-_40px),_var(--stands-for-ring-size))] [height:auto] [transform:translate(-50%,_-50%)] [pointer-events:none] [--stands-for-ring-size:820px]" viewBox="0 0 820 820" fill="none" aria-hidden="true">
         <defs>
-          <linearGradient id="stands-for-green-tail" x1="0.5" y1="410" x2="156.888738" y2="88.091723" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#83FF83" stopOpacity="0" />
-            <stop offset="1" stopColor="#83FF83" />
+          <linearGradient id="stands-for-accent-tail" x1="0.5" y1="410" x2="156.888738" y2="88.091723" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#FF9152" stopOpacity="0" />
+            <stop offset="1" stopColor="#FF9152" />
           </linearGradient>
         </defs>
         <circle cx="410" cy="410" r="409.5" stroke="white" strokeOpacity=".1" />
         <circle cx="410" cy="410" r="409.5" stroke="white" strokeOpacity=".06" strokeDasharray="4 4" />
-        <path className="stands-for-arc stands-for-arc--green [transform-box:view-box] [transform-origin:center] [will-change:transform] motion-reduce:[animation:none] [animation:stands-for-clockwise_18s_linear_infinite]" d="M .5 410 A 409.5 409.5 0 0 1 156.888738 88.091723" stroke="url(#stands-for-green-tail)" />
+        <path className="stands-for-arc stands-for-arc--accent [transform-box:view-box] [transform-origin:center] [will-change:transform] motion-reduce:[animation:none] [animation:stands-for-clockwise_18s_linear_infinite]" d="M .5 410 A 409.5 409.5 0 0 1 156.888738 88.091723" stroke="url(#stands-for-accent-tail)" />
       </svg>
       <svg className="stands-for-ring stands-for-ring--inner [position:absolute] [top:50%] [left:50%] [width:min(calc(100%_-_40px),_var(--stands-for-ring-size))] [height:auto] [transform:translate(-50%,_-50%)] [pointer-events:none] [--stands-for-ring-size:660px]" viewBox="0 0 660 660" fill="none" aria-hidden="true">
         <defs>

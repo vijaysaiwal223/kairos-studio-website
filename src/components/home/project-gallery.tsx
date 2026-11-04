@@ -93,7 +93,7 @@ function ProjectCard({ index, featured, onSelect, previousIndex, swap, onSwapEnd
         </span>
       </div>
       {corners.map((corner) => (
-        <span key={corner} aria-hidden="true" className={`pointer-events-none absolute size-[16px] border-[#83ff83] ${corner} max-[700px]:size-[12px]`} />
+        <span key={corner} aria-hidden="true" className={`pointer-events-none absolute size-[16px] border-[#FF9152] ${corner} max-[700px]:size-[12px]`} />
       ))}
     </>
   );
@@ -102,7 +102,7 @@ function ProjectCard({ index, featured, onSelect, previousIndex, swap, onSwapEnd
 
   if (featured) {
     if (project.href) {
-      return <Link href={project.href} aria-label={`View ${project.name} project`} className={`${frame} focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#83ff83]`}>{content}</Link>;
+      return <Link href={project.href} aria-label={`View ${project.name} project`} className={`${frame} focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FF9152]`}>{content}</Link>;
     }
     return <div aria-label={`${project.name} featured project`} className={frame}>{content}</div>;
   }
@@ -171,11 +171,11 @@ export function ProjectGallery() {
             onSwapEnd={() => setTransition((current) => current?.id === transition?.id ? null : current)}
           />
           <div className="flex h-[48px] w-[320px] items-center justify-between rounded-[8px] bg-[#111] p-[4px] max-[480px]:w-[min(320px,calc(100vw-56px))]">
-            <button type="button" onClick={() => selectProject(previous, "previous")} aria-label="Previous project" className="flex size-[40px] items-center justify-center rounded-[8px] bg-[#212121] transition-colors hover:bg-[#313131] focus-visible:outline-2 focus-visible:outline-[#83ff83]">
+            <button type="button" onClick={() => selectProject(previous, "previous")} aria-label="Previous project" className="flex size-[40px] items-center justify-center rounded-[8px] bg-[#212121] transition-colors hover:bg-[#313131] focus-visible:outline-2 focus-visible:outline-[#FF9152]">
               <Arrow direction="left" />
             </button>
             <span key={active} aria-live="polite" className="min-w-0 animate-[project-title-enter_360ms_ease-out_both] truncate text-[24px] leading-[32px] tracking-[-0.02em] motion-reduce:animate-none">{projects[active].name}</span>
-            <button type="button" onClick={() => selectProject(next, "next")} aria-label="Next project" className="flex size-[40px] items-center justify-center rounded-[8px] bg-[#212121] transition-colors hover:bg-[#313131] focus-visible:outline-2 focus-visible:outline-[#83ff83]">
+            <button type="button" onClick={() => selectProject(next, "next")} aria-label="Next project" className="flex size-[40px] items-center justify-center rounded-[8px] bg-[#212121] transition-colors hover:bg-[#313131] focus-visible:outline-2 focus-visible:outline-[#FF9152]">
               <Arrow direction="right" />
             </button>
           </div>

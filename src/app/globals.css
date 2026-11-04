@@ -1,5 +1,32 @@
 @import "tailwindcss";
 
+@keyframes globe-pulse-expand {
+  0% { transform: scale(0.3); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.why-kairos-emblem-mark {
+  background: #a8a8a8;
+  mask-image: url("/home/why-kairos/emblem-mark-137-2759.png");
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-image: url("/home/why-kairos/emblem-mark-137-2759.png");
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1.2s ease-out;
+}
+
+.why-kairos-emblem-mark--lit {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .why-kairos-emblem-mark {
+    transition: none;
+  }
+}
+
 @keyframes stands-for-clockwise {
   to { transform: rotate(360deg); }
 }
